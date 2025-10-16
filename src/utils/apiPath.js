@@ -1,9 +1,9 @@
-// require("dotenv").config()
 
-export const BASE_URL ='http://localhost:5000'
+
+export const BASE_URL =process.env.BACKEND_URL
 
 export const API_PATH = {
-    BASE_URL: 'http://localhost:5000',
+    BASE_URL: process.env.BACKEND_URL,
     AUTH: {
         LOGIN: "/api/v1/auth/login",
         REGISTER: "/api/v1/auth/register",
