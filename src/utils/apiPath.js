@@ -1,8 +1,8 @@
 
 
-export const BASE_URL = import.meta.env.VITE_BACKEND_URL
+export const BASE_URL = 'https://fin-mate-backend.onrender.com'
 export const API_PATH = {
-    BASE_URL: import.meta.env.VITE_FRONTEND_URL,
+    BASE_URL: 'https://fin-mate-backend.onrender.com',
     AUTH: {
         LOGIN: "/api/v1/auth/login",
         REGISTER: "/api/v1/auth/register",
