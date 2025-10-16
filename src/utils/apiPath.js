@@ -1,9 +1,8 @@
 
 
-export const BASE_URL =process.env.BACKEND_URL
-
+export const BASE_URL = import.meta.env.VITE_BACKEND_URL
 export const API_PATH = {
-    BASE_URL: process.env.BACKEND_URL,
+    BASE_URL: import.meta.env.VITE_FRONTEND_URL,
     AUTH: {
         LOGIN: "/api/v1/auth/login",
         REGISTER: "/api/v1/auth/register",
