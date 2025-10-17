@@ -150,7 +150,7 @@ const SignUp = () => {
 
           <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
 
-          <div className='grid grid-rows-2 md:grid-rows-2 gap-4'>
+          <div className='grid grid-rows-2 md:grid-rows-2 gap-2'>
             <Input
               type="text"
               value={fullName}
@@ -181,7 +181,7 @@ const SignUp = () => {
           {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
 
           <button type='submit' className='btn-primary cursor-pointer' disabled={loading}>
-            {loading ? 'Sending OTP...' : 'SEND OTP'}
+            {loading ? 'Sending OTP...' : 'SIGNUP'}
           </button>
 
           </form>
@@ -241,7 +241,7 @@ const SignUp = () => {
           </button>
         </div>
 
-        <p className='text-[13px] text-slate-800 mt-3'>
+        <p className='text-[13px] text-slate-800 mt-3 pb-3'>
           Already have an account?
           <Link className='font-medium text-primary underline' to="/login"> Login</Link>
         </p>
