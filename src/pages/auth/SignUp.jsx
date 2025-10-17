@@ -150,7 +150,7 @@ const SignUp = () => {
 
           <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
 
-          <div className='grid grid-rows-2 md:grid-rows-2 gap-2'>
+          <div className='grid grid-rows-2 md:grid-rows-2 gap-1'>
             <Input
               type="text"
               value={fullName}
@@ -241,7 +241,7 @@ const SignUp = () => {
           </button>
         </div>
 
-        <p className='text-[13px] text-slate-800 mt-3 pb-3'>
+        <p className='text-[13px] text-slate-800 mt-3 pb-4'>
           Already have an account?
           <Link className='font-medium text-primary underline' to="/login"> Login</Link>
         </p>
