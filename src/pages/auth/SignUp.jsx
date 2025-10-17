@@ -11,9 +11,12 @@ import uploadImage from '../../utils/uploadImage';
 import { toast } from 'react-toastify';
 
 
+
 const SignUp = () => {
 
+
   const navigate = useNavigate();
+
 
   const [profilePic, setProfilePic] = useState("")
   const [fullName, setFullName] = useState("")
@@ -24,12 +27,16 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
 
+
   const [error, setError] = useState(null)
+
 
   const { updateUser } = useContext(UserContext)
 
+
   const handleSendOTP = async (e) => {
     e.preventDefault()
+
 
     if (!fullName) {
       setError("Enter your full name")
@@ -44,13 +51,16 @@ const SignUp = () => {
       return
     }
 
+
     setError("")
     setLoading(true)
+
 
     try {
       const response = await axiosInstance.post(API_PATH.AUTH.SEND_OTP, {
         email,
       });
+
 
       if (response.data.message === "OTP sent successfully") {
         setOtpSent(true)
@@ -68,18 +78,23 @@ const SignUp = () => {
     }
   }
 
+
   const handleVerifyOTP = async (e) => {
     e.preventDefault()
+
 
     if (!otp || otp.length !== 6) {
       setError("Please enter a valid 6-digit OTP")
       return
     }
 
+
     setError("")
     setLoading(true)
 
+
     let profileImageUrl = ""
+
 
     try {
       // upload image if present
@@ -87,6 +102,7 @@ const SignUp = () => {
         const imgUploadRes = await uploadImage(profilePic)
         profileImageUrl = imgUploadRes.imageUrl || "";
       }
+
 
       const response = await axiosInstance.post(API_PATH.AUTH.VERIFY_OTP, {
         fullName,
@@ -96,7 +112,9 @@ const SignUp = () => {
         otp,
       });
 
+
       const { token, user } = response.data;
+
 
       if (token) {
         localStorage.setItem("token", token);
@@ -115,6 +133,7 @@ const SignUp = () => {
     }
   }
 
+
   const handleResendOTP = async () => {
     setLoading(true)
     try {
@@ -129,8 +148,10 @@ const SignUp = () => {
     }
   }
 
+
   return (
     <AuthLayout>
+
 
 
 
@@ -145,12 +166,15 @@ const SignUp = () => {
           }
         </p>
 
+
         {step === 1 ? (
           <form onSubmit={handleSendOTP}>
 
+
           <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
 
-          <div className='grid grid-rows-2 md:grid-rows-2 gap-1'>
+
+          <div className='grid grid-rows-2 md:grid-rows-2 gap-0.5 md:gap-1'>
             <Input
               type="text"
               value={fullName}
@@ -159,6 +183,7 @@ const SignUp = () => {
               placeholder="enter your name"
             />
 
+
             <Input
               type="text"
               value={email}
@@ -166,6 +191,7 @@ const SignUp = () => {
               label="Email Address"
               placeholder='enter your email'
             />
+
 
             <div className='md:col-span-2'>
               <Input
@@ -178,11 +204,14 @@ const SignUp = () => {
             </div>
           </div>
 
+
           {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
+
 
           <button type='submit' className='btn-primary cursor-pointer' disabled={loading}>
             {loading ? 'Sending OTP...' : 'SIGNUP'}
           </button>
+
 
           </form>
         ) : (
@@ -198,11 +227,14 @@ const SignUp = () => {
               />
             </div>
 
+
             {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
+
 
             <button type='submit' className='btn-primary cursor-pointer w-full mb-4' disabled={loading}>
               {loading ? 'Verifying...' : 'VERIFY & SIGN UP'}
             </button>
+
 
             <button
               type='button'
@@ -215,6 +247,7 @@ const SignUp = () => {
           </form>
         )}
 
+
         {/* Google Login Button */}
         <div className="mt-6">
           <div className="relative">
@@ -225,6 +258,7 @@ const SignUp = () => {
               <span className="px-2 bg-white text-gray-500">Or continue with</span>
             </div>
           </div>
+
 
           <button
             type="button"
@@ -241,14 +275,17 @@ const SignUp = () => {
           </button>
         </div>
 
+
         <p className='text-[13px] text-slate-800 mt-3 pb-4'>
           Already have an account?
           <Link className='font-medium text-primary underline' to="/login"> Login</Link>
         </p>
       </div>
 
+
     </AuthLayout>
   )
 }
+
 
 export default SignUp
