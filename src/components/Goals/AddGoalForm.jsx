@@ -43,8 +43,6 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
     }))
   }
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -64,13 +62,13 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Create New Goal">
-      <form onSubmit={handleSubmit} className='max-h-[80vh] overflow-y-auto'>
-        <div className='p-4 sm:p-6'>
+      <form onSubmit={handleSubmit} className='max-h-[80vh] md:max-h-[85vh] overflow-y-auto'>
+        <div className='p-3 sm:p-4 md:p-6'>
           {/* Basic Information */}
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium text-white flex items-center gap-2'>
-              <LuTarget className='w-5 h-5' />
-              Basic Information
+          <div className='space-y-3 md:space-y-4 mb-4 md:mb-6'>
+            <h3 className='text-base md:text-lg font-medium text-white flex items-center gap-2'>
+              <LuTarget className='w-4 h-4 md:w-5 md:h-5' />
+              <span>Basic Information</span>
             </h3>
 
             <Input
@@ -82,25 +80,25 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
             />
 
             <div className="input-group">
-              <label className="input-label">Description</label>
+              <label className="input-label text-sm md:text-base">Description</label>
               <textarea
                 name='description'
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={3}
-                className='input-control'
+                className='input-control text-sm md:text-base'
                 placeholder='Describe your goal...'
               />
             </div>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4'>
               <div className="input-group">
-                <label className="input-label">Goal Type *</label>
+                <label className="input-label text-sm md:text-base">Goal Type *</label>
                 <select
                   name='goalType'
                   value={formData.goalType}
                   onChange={handleInputChange}
-                  className='input-control'
+                  className='input-control text-sm md:text-base'
                   required
                 >
                   {goalTypes.map(type => (
@@ -112,12 +110,12 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
               </div>
 
               <div className="input-group">
-                <label className="input-label">Priority *</label>
+                <label className="input-label text-sm md:text-base">Priority *</label>
                 <select
                   name='priority'
                   value={formData.priority}
                   onChange={handleInputChange}
-                  className='input-control'
+                  className='input-control text-sm md:text-base'
                   required
                 >
                   {priorities.map(priority => (
@@ -130,12 +128,12 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
             </div>
 
             <div className="input-group">
-              <label className="input-label">Duration *</label>
+              <label className="input-label text-sm md:text-base">Duration *</label>
               <select
                 name='duration'
                 value={formData.duration}
                 onChange={handleInputChange}
-                className='input-control'
+                className='input-control text-sm md:text-base'
                 required
               >
                 {durations.map(duration => (
@@ -148,13 +146,13 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
           </div>
 
           {/* Target Information */}
-          <div className='space-y-4'>
-            <h3 className='text-lg font-medium text-white flex items-center gap-2'>
-              <LuTrendingUp className='w-5 h-5' />
-              Target Information
+          <div className='space-y-3 md:space-y-4'>
+            <h3 className='text-base md:text-lg font-medium text-white flex items-center gap-2'>
+              <LuTrendingUp className='w-4 h-4 md:w-5 md:h-5' />
+              <span>Target Information</span>
             </h3>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4'>
               <Input
                 value={formData.targetAmount}
                 onChange={({ target }) => handleInputChange({ target: { name: 'targetAmount', value: target.value } })}
@@ -183,13 +181,18 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
             )}
           </div>
 
-
-
           {/* Actions */}
-          <div className='flex justify-end mt-6'>
+          <div className='flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mt-4 md:mt-6'>
+            <button
+              type='button'
+              onClick={onClose}
+              className='w-full sm:w-auto px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm md:text-base order-2 sm:order-1'
+            >
+              Cancel
+            </button>
             <button
               type='submit'
-              className='add-btn add-btn-fill'
+              className='w-full sm:w-auto add-btn add-btn-fill text-sm md:text-base py-2 md:py-2.5 order-1 sm:order-2'
             >
               Create Goal
             </button>
