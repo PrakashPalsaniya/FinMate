@@ -25,7 +25,7 @@ const App = () => {
       <div className='text-xl font-medium text-black'>
         <Router>
           <Routes>
-            <Route path="/" element={<Root />} />
+            <Route path="/"  element={<Root />} />
             <Route path="/login" exact element={<Login />} />
             <Route path="/signUp" exact element={<SignUp />} />
             <Route path="/auth/callback" exact element={<AuthCallback />} />
