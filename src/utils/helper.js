@@ -81,3 +81,14 @@ export const getIncomeIcon = (category) => {
     };
     return iconMap[category.toLowerCase()] || LuUtensils;
 }
+
+export const getIconComponent = (iconName) => {
+    const iconMap = {
+        LuWalletMinimal: LuWalletMinimal,
+        LuLaptop: LuLaptop,
+        LuBuilding: LuBuilding,
+        LuTrendingUp: LuTrendingUp,
+        LuUtensils: LuUtensils
+    };
+    return iconMap[iconName] || LuUtensils;
+}

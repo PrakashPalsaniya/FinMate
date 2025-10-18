@@ -1,6 +1,6 @@
 import React from 'react'
 import { LuTrash2, LuTrendingDown, LuTrendingUp, LuUtensils, LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp as LuInvestment } from 'react-icons/lu'
-import { getIncomeIcon } from '../../utils/helper'
+import { getIncomeIcon, getIconComponent } from '../../utils/helper'
 
 const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn, onDelete }) => {
 
@@ -8,8 +8,13 @@ const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn, o
 
     const renderIcon = () => {
         if (icon && typeof icon === 'string') {
-            const IconComponent = getIncomeIcon(icon);
-            return <IconComponent />;
+            if (type === 'income') {
+                const IconComponent = getIconComponent(icon);
+                return <IconComponent />;
+            } else {
+                const IconComponent = getIncomeIcon(icon);
+                return <IconComponent />;
+            }
         }
         return <LuUtensils />;
     };
