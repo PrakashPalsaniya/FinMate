@@ -1,5 +1,5 @@
 import moment from "moment";
-import { LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp, LuUtensils, LuHome, LuGamepad2, LuCar, LuZap, LuHeart, LuGraduationCap, LuShoppingBag } from "react-icons/lu";
+import { LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp, LuUtensils, LuHouse, LuGamepad2, LuCar, LuZap, LuHeart, LuGraduationCap, LuShoppingBag } from "react-icons/lu";
 
 
 
@@ -91,7 +91,7 @@ export const getIconComponent = (iconName) => {
         LuBuilding: LuBuilding,
         LuTrendingUp: LuTrendingUp,
         LuUtensils: LuUtensils,
-        LuHome: LuHome,
+        LuHome: LuHouse,
         LuGamepad2: LuGamepad2,
         LuCar: LuCar,
         LuZap: LuZap,

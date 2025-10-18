@@ -1,5 +1,5 @@
 import React from 'react'
-import { LuTrash2, LuTrendingDown, LuTrendingUp, LuUtensils, LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp as LuInvestment, LuHome, LuGamepad2, LuCar, LuZap, LuHeart, LuGraduationCap, LuShoppingBag } from 'react-icons/lu'
+import { LuTrash2, LuTrendingDown, LuTrendingUp, LuUtensils, LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp as LuInvestment, LuHouse, LuGamepad2, LuCar, LuZap, LuHeart, LuGraduationCap, LuShoppingBag } from 'react-icons/lu'
 import { getIncomeIcon, getIconComponent } from '../../utils/helper'
 
 const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn, onDelete }) => {
