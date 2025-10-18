@@ -9,10 +9,12 @@ const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn, o
     const renderIcon = () => {
         if (icon && typeof icon === 'string') {
             if (type === 'income') {
-                const IconComponent = getIconComponent(icon);
-                return <IconComponent />;
-            } else {
+                // For income, icon is category name, map to icon component
                 const IconComponent = getIncomeIcon(icon);
+                return <IconComponent />;
+            } else if (type === 'expense') {
+                // For expense, icon is icon name, get the component directly
+                const IconComponent = getIconComponent(icon);
                 return <IconComponent />;
             }
         }
