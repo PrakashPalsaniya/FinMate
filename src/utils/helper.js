@@ -1,5 +1,5 @@
 import moment from "moment";
-import { LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp, LuUtensils } from "react-icons/lu";
+import { LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp, LuUtensils, LuHome, LuGamepad2, LuCar, LuZap, LuHeart, LuGraduationCap, LuShoppingBag } from "react-icons/lu";
 
 export const validEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+/;
@@ -88,7 +88,14 @@ export const getIconComponent = (iconName) => {
         LuLaptop: LuLaptop,
         LuBuilding: LuBuilding,
         LuTrendingUp: LuTrendingUp,
-        LuUtensils: LuUtensils
+        LuUtensils: LuUtensils,
+        LuHome: LuHome,
+        LuGamepad2: LuGamepad2,
+        LuCar: LuCar,
+        LuZap: LuZap,
+        LuHeart: LuHeart,
+        LuGraduationCap: LuGraduationCap,
+        LuShoppingBag: LuShoppingBag
     };
     return iconMap[iconName] || LuUtensils;
 }
