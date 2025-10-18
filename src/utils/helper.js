@@ -1,4 +1,5 @@
 import moment from "moment";
+import { LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp, LuUtensils } from "react-icons/lu";
 
 export const validEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+/;
@@ -68,4 +69,15 @@ export const prepareExpenseLineChartData = (data = []) => {
     }))
 
     return chartData;
+}
+
+export const getIncomeIcon = (category) => {
+    const iconMap = {
+        salary: LuWalletMinimal,
+        freelance: LuLaptop,
+        business: LuBuilding,
+        investment: LuTrendingUp,
+        others: LuUtensils
+    };
+    return iconMap[category.toLowerCase()] || LuUtensils;
 }

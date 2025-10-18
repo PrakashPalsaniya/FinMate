@@ -1,15 +1,22 @@
 import React from 'react'
-import { LuTrash2, LuTrendingDown, LuTrendingUp, LuUtensils } from 'react-icons/lu'
+import { LuTrash2, LuTrendingDown, LuTrendingUp, LuUtensils, LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp as LuInvestment } from 'react-icons/lu'
+import { getIncomeIcon } from '../../utils/helper'
 
 const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn, onDelete }) => {
 
     const getAmountStyles = () => type === "income" ? "bg-green-50 text-green-500" : "bg-red-50 text-red-500";
 
+    const renderIcon = () => {
+        if (icon && typeof icon === 'string') {
+            const IconComponent = getIncomeIcon(icon);
+            return <IconComponent />;
+        }
+        return <LuUtensils />;
+    };
+
     return <div className='group relative flex items-center gap-4 mt-2 p-3 rounded-lg hover:bg-gray-100/50'>
         <div className='w-12 h-12 flex items-center justify-center text-xl text-gray-800 bg-gray-100 rounded-full'>
-            {icon
-                ? (<img className='w-6 h-6' src={icon} />)
-                : (<LuUtensils />)}
+            {renderIcon()}
         </div>
 
         <div className='flex-1 flex items-center justify-between'>
