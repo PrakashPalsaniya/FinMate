@@ -19,8 +19,8 @@ const RecentTransactions = ({ transactions, onSeeMore }) => {
                     transactions.slice(0, 5).map((item) => (
                         <TransactionInfoCard
                             key={item._id}
-                            title={item.type === 'expense' ? item.category : item.category}
-                            icon={item.icon}
+                            title={item.category}
+                            icon={item.type === 'income' ? item.category : item.icon}
                             date={moment(item.date).format("Do MMM YYYY")}
                             amount={item.amount}
                             type={item.type}
