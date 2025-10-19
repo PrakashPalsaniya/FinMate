@@ -279,9 +279,7 @@ const AISummary = () => {
                             <div className='flex-1'>
                               <p className='text-sm text-gray-800 leading-relaxed'>{move}</p>
                             </div>
-                            <button className='px-4 py-2 bg-green-500 text-white text-xs font-semibold rounded-lg hover:bg-green-600 transition-all transform hover:scale-105 whitespace-nowrap shadow-sm'>
-                              Take Action
-                            </button>
+                          
                           </div>
                         ))}
                       </div>
