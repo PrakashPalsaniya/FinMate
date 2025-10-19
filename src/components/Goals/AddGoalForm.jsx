@@ -183,13 +183,7 @@ const AddGoalForm = ({ onClose, onSubmit }) => {
 
           {/* Actions */}
           <div className='flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mt-4 md:mt-6'>
-            <button
-              type='button'
-              onClick={onClose}
-              className='w-full sm:w-auto px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm md:text-base order-2 sm:order-1'
-            >
-              Cancel
-            </button>
+          
             <button
               type='submit'
               className='w-full sm:w-auto add-btn add-btn-fill text-sm md:text-base py-2 md:py-2.5 order-1 sm:order-2'

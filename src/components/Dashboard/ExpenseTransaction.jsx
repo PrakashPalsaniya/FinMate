@@ -21,10 +21,10 @@ const ExpenseTransaction = ({ transactions, onSeeMore }) => {
                             <TransactionInfoCard
                                 key={expense._id}
                                 title={expense.category}
-                                icon={expense.icon}
+                                icon={expense.category}
                                 date={moment(expense.date).format("Do MMM YYYY")}
                                 amount={expense.amount}
-                                type={expense.type}
+                                type="expense"
                                 hideDeleteBtn
                             />
                         ))

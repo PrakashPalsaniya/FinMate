@@ -101,3 +101,18 @@ export const getIconComponent = (iconName) => {
     };
     return iconMap[iconName] || LuUtensils;
 }
+
+export const getExpenseIcon = (category) => {
+    const iconMap = {
+        rent: LuHouse,
+        entertainment: LuGamepad2,
+        food: LuUtensils,
+        transport: LuCar,
+        utilities: LuZap,
+        healthcare: LuHeart,
+        education: LuGraduationCap,
+        shopping: LuShoppingBag,
+        others: LuUtensils
+    };
+    return iconMap[category.toLowerCase()] || LuUtensils;
+}

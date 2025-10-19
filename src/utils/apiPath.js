@@ -1,6 +1,6 @@
 
 
-export const BASE_URL = 'https://fin-mate-backend.onrender.com'
+export const BASE_URL =  'https://fin-mate-backend.onrender.com'
 export const API_PATH = {
     BASE_URL: 'https://fin-mate-backend.onrender.com',
     AUTH: {

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../utils/axiosInstance'
 import { API_PATH } from '../../utils/apiPath'
 import InfoCard from '../../components/Cards/InfoCard'
+import SkeletonCard from '../../components/SkeletonCard'
 import { LuHandCoins, LuWalletMinimal } from 'react-icons/lu'
 import { IoMdCard } from "react-icons/io"
 import RecentTransactions from '../../components/Dashboard/RecentTransactions.jsx'
@@ -54,24 +55,34 @@ const Home = () => {
     <DashboardLayout activeMenu="Dashboard">
       <div className='my-5 mx-auto'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-          <InfoCard
-            icon={<IoMdCard />}
-            label="Total Balance"
-            value={addIndianThousandSeparator(dashboardData?.totalBalance || 0)}
-            color="bg-primary"
-          />
-          <InfoCard
-            icon={<LuWalletMinimal />}
-            label="Total Income"
-            value={addIndianThousandSeparator(dashboardData?.totalIncome || 0)}
-            color="bg-green-500"
-          />
-          <InfoCard
-            icon={<LuHandCoins />}
-            label="Total Expense"
-            value={addIndianThousandSeparator(dashboardData?.totalExpenses || 0)}
-            color="bg-red-500"
-          />
+          {loading ? (
+            <>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </>
+          ) : (
+            <>
+              <InfoCard
+                icon={<IoMdCard />}
+                label="Total Balance"
+                value={addIndianThousandSeparator(dashboardData?.totalBalance || 0)}
+                color="bg-primary"
+              />
+              <InfoCard
+                icon={<LuWalletMinimal />}
+                label="Total Income"
+                value={addIndianThousandSeparator(dashboardData?.totalIncome || 0)}
+                color="bg-green-500"
+              />
+              <InfoCard
+                icon={<LuHandCoins />}
+                label="Total Expense"
+                value={addIndianThousandSeparator(dashboardData?.totalExpenses || 0)}
+                color="bg-red-500"
+              />
+            </>
+          )}
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-6'>
