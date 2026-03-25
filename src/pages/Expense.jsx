@@ -23,7 +23,7 @@ const Expense = () => {
       if (response.data.success) {
         setExpenses(response.data.data);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch expenses');
     } finally {
       setLoading(false);

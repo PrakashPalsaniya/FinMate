@@ -1,108 +1,92 @@
 import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import AuthLayout from '../../components/layouts/AuthLayout'
-import Input from '../../components/inputs/Input';
-import { validEmail } from '../../utils/helper';
-import ProfilePhotoSelector from '../../components/inputs/ProfilePhotoSelector';
-import axiosInstance from '../../utils/axiosInstance';
-import { API_PATH } from '../../utils/apiPath';
+import Input from '../../components/inputs/Input'
+import ProfilePhotoSelector from '../../components/inputs/ProfilePhotoSelector'
+import { validEmail } from '../../utils/helper'
+import axiosInstance from '../../utils/axiosInstance'
+import { API_PATH } from '../../utils/apiPath'
 import { UserContext } from '../../context/UserContext'
-import uploadImage from '../../utils/uploadImage';
-import { toast } from 'react-toastify';
-
-
+import uploadImage from '../../utils/uploadImage'
+import { getUserFriendlyErrorMessage } from '../../utils/errorMessage'
 
 const SignUp = () => {
-
-
-  const navigate = useNavigate();
-
+  const navigate = useNavigate()
+  const { login } = useContext(UserContext)
 
   const [profilePic, setProfilePic] = useState("")
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [otp, setOtp] = useState("")
-  const [step, setStep] = useState(1) // 1: details, 2: OTP
+  const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
-
-
   const [error, setError] = useState(null)
-
-
-  const { updateUser } = useContext(UserContext)
-
 
   const handleSendOTP = async (e) => {
     e.preventDefault()
-
 
     if (!fullName) {
       setError("Enter your full name")
       return
     }
+
     if (!validEmail(email)) {
-      setError("enter valid emailId")
-      return
-    }
-    if (!password) {
-      setError("enter password")
+      setError("Enter a valid email address")
       return
     }
 
+    if (!password) {
+      setError("Enter a password")
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
+      return
+    }
 
     setError("")
     setLoading(true)
 
-
     try {
-      const response = await axiosInstance.post(API_PATH.AUTH.SEND_OTP, {
-        email,
-      });
-
+      const response = await axiosInstance.post(API_PATH.AUTH.SEND_OTP, { email })
 
       if (response.data.message === "OTP sent successfully") {
-        setOtpSent(true)
         setStep(2)
-        toast.success("OTP sent to your email!")
+        toast.success("OTP sent to your email")
       }
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message)
-      } else {
-        setError(error.message)
-      }
+      setError(
+        getUserFriendlyErrorMessage(error, {
+          fallback: 'Could not continue right now. Please try again later.',
+          allowUnauthorizedMessage: true,
+        })
+      )
     } finally {
       setLoading(false)
     }
   }
 
-
   const handleVerifyOTP = async (e) => {
     e.preventDefault()
-
 
     if (!otp || otp.length !== 6) {
       setError("Please enter a valid 6-digit OTP")
       return
     }
 
-
     setError("")
     setLoading(true)
 
-
     let profileImageUrl = ""
 
-
     try {
-      // upload image if present
       if (profilePic) {
         const imgUploadRes = await uploadImage(profilePic)
-        profileImageUrl = imgUploadRes.imageUrl || "";
+        profileImageUrl = imgUploadRes.imageUrl || ""
       }
-
 
       const response = await axiosInstance.post(API_PATH.AUTH.VERIFY_OTP, {
         fullName,
@@ -110,162 +94,151 @@ const SignUp = () => {
         password,
         profileImageUrl,
         otp,
-      });
+      })
 
-
-      const { token, user } = response.data;
-
+      const { token, user } = response.data
 
       if (token) {
-        localStorage.setItem("token", token);
-        updateUser(user)
-        toast.success("Account created successfully!")
-        navigate("/dashboard");
+        login(user, token)
+        toast.success("Account created successfully")
+        navigate("/dashboard", { replace: true })
       }
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message)
-      } else {
-        setError(error.message)
-      }
+      setError(
+        getUserFriendlyErrorMessage(error, {
+          fallback: 'Could not verify the code right now. Please try again later.',
+          allowUnauthorizedMessage: true,
+        })
+      )
     } finally {
       setLoading(false)
     }
   }
-
 
   const handleResendOTP = async () => {
     setLoading(true)
+
     try {
-      const response = await axiosInstance.post(API_PATH.AUTH.SEND_OTP, {
-        email,
-      });
-      toast.success("OTP resent to your email!")
+      await axiosInstance.post(API_PATH.AUTH.SEND_OTP, { email })
+      toast.success("OTP resent to your email")
     } catch (error) {
-      toast.error("Failed to resend OTP")
+      toast.error(
+        getUserFriendlyErrorMessage(error, {
+          fallback: 'Could not resend the code right now. Please try again later.',
+          allowUnauthorizedMessage: true,
+        })
+      )
     } finally {
       setLoading(false)
     }
   }
 
-
   return (
     <AuthLayout>
+      <div>
+        <div className='flex items-center gap-3'>
+          <div className={`h-2.5 w-2.5 rounded-full ${step === 1 ? 'bg-primary' : 'bg-slate-300'}`} />
+          <div className={`h-2.5 w-2.5 rounded-full ${step === 2 ? 'bg-primary' : 'bg-slate-300'}`} />
+        </div>
 
-
-
-
-      <div className='lg:w-[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center'>
-        <h3 className='text-xl font-semibold text-black'>
-          {step === 1 ? 'Create New Account' : 'Verify Your Email'}
-        </h3>
-        <p className='text-[13px] text-slate-700 mt-[5px] mb-6'>
+        <p className='page-eyebrow mt-5'>{step === 1 ? 'Create account' : 'Verify email'}</p>
+        <h2 className='mt-3 text-3xl font-semibold tracking-tight text-slate-900'>
+          {step === 1 ? 'Set up your FinMate space' : 'Enter the code we sent you'}
+        </h2>
+        <p className='mt-3 text-sm leading-7 text-slate-500'>
           {step === 1
-            ? 'Join us today by entering your details below.'
-            : `We've sent a 6-digit OTP to ${email}. Please enter it below.`
-          }
+            ? 'Start with your basic details, then we will verify your email before opening the dashboard.'
+            : `We sent a 6-digit OTP to ${email}. Enter it below to finish creating your account.`}
         </p>
 
+        <div className='mt-8'>
+          {step === 1 ? (
+            <form onSubmit={handleSendOTP}>
+              <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
 
-        {step === 1 ? (
-          <form onSubmit={handleSendOTP}>
+              <Input
+                type="text"
+                value={fullName}
+                onChange={({ target }) => setFullName(target.value)}
+                label="Full name"
+                placeholder="Your full name"
+              />
 
+              <Input
+                type="email"
+                value={email}
+                onChange={({ target }) => setEmail(target.value)}
+                label="Email address"
+                placeholder='you@example.com'
+              />
 
-          <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
-
-
-          <div className='grid grid-rows-2 md:grid-rows-2 gap-0.5 md:gap-1'>
-            <Input
-              type="text"
-              value={fullName}
-              onChange={({ target }) => setFullName(target.value)}
-              label="Full name"
-              placeholder="enter your name"
-            />
-
-
-            <Input
-              type="text"
-              value={email}
-              onChange={({ target }) => setEmail(target.value)}
-              label="Email Address"
-              placeholder='enter your email'
-            />
-
-
-            <div className='md:col-span-2'>
               <Input
                 type="password"
                 value={password}
                 onChange={({ target }) => setPassword(target.value)}
                 label="Password"
-                placeholder='password'
+                placeholder='Create a strong password'
               />
-            </div>
-          </div>
 
+              {error && (
+                <div className='mb-4 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600'>
+                  {error}
+                </div>
+              )}
 
-          {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
-
-
-          <button type='submit' className='btn-primary cursor-pointer' disabled={loading}>
-            {loading ? 'Sending OTP...' : 'SIGNUP'}
-          </button>
-
-
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOTP}>
-            <div className='mb-4'>
+              <button type='submit' className='btn-primary cursor-pointer' disabled={loading}>
+                {loading ? 'Sending OTP...' : 'Continue'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOTP}>
               <Input
                 type="text"
                 value={otp}
                 onChange={({ target }) => setOtp(target.value.replace(/\D/g, '').slice(0, 6))}
-                label="Enter 6-digit OTP"
+                label="6-digit OTP"
                 placeholder="123456"
                 maxLength={6}
               />
-            </div>
 
+              {error && (
+                <div className='mb-4 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600'>
+                  {error}
+                </div>
+              )}
 
-            {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
+              <button type='submit' className='btn-primary cursor-pointer mb-3' disabled={loading}>
+                {loading ? 'Verifying...' : 'Verify and create account'}
+              </button>
 
+              <button
+                type='button'
+                onClick={handleResendOTP}
+                className='btn-secondary !w-full'
+                disabled={loading}
+              >
+                Resend OTP
+              </button>
+            </form>
+          )}
+        </div>
 
-            <button type='submit' className='btn-primary cursor-pointer w-full mb-4' disabled={loading}>
-              {loading ? 'Verifying...' : 'VERIFY & SIGN UP'}
-            </button>
-
-
-            <button
-              type='button'
-              onClick={handleResendOTP}
-              className='text-primary hover:underline text-sm'
-              disabled={loading}
-            >
-              Resend OTP
-            </button>
-          </form>
-        )}
-
-
-        {/* Google Login Button */}
-        <div className="mt-6">
+        <div className="mt-8">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="bg-white px-3 text-slate-400">or continue with</span>
             </div>
           </div>
-
 
           <button
             type="button"
             onClick={() => window.location.href = `${API_PATH.BASE_URL}/api/v1/auth/google`}
-            className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition"
+            className="btn-secondary mt-4 w-full"
           >
-            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -275,17 +248,13 @@ const SignUp = () => {
           </button>
         </div>
 
-
-        <p className='text-[13px] text-slate-800 mt-3 pb-4'>
+        <p className='mt-6 text-sm text-slate-600'>
           Already have an account?
-          <Link className='font-medium text-primary underline' to="/login"> Login</Link>
+          <Link className='ml-1 font-semibold text-primary hover:text-primary-deep' to="/login">Sign in</Link>
         </p>
       </div>
-
-
     </AuthLayout>
   )
 }
-
 
 export default SignUp

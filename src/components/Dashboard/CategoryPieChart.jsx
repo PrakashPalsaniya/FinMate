@@ -1,24 +1,28 @@
 import React from 'react'
 import CustomPieChart from '../Charts/CustomPieChart'
-
-const COLORS = ["#875cf5", "#22C55E", "#FF6900", "#4f39f6","#29c9f6"];
+import { CHART_COLORS } from '../../utils/helper'
 
 const CategoryPieChart = ({ data, title }) => {
-
     const chartData = Object.keys(data || {}).map((key) => ({
         name: key.charAt(0).toUpperCase() + key.slice(1),
         amount: data[key],
-    }));
+    }))
 
     return (
         <div className="card">
-            <div className="flex items-center justify-between">
-                <h5 className="text-lg">{title}</h5>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Categories</p>
+                    <h5 className="mt-2 text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">{title}</h5>
+                    <p className="mt-1.5 text-[13px] leading-6 text-slate-500 sm:mt-2 sm:text-sm">
+                        Spot where your money is concentrated so adjustments feel easier to make.
+                    </p>
+                </div>
             </div>
 
             <CustomPieChart
                 data={chartData}
-                colors={COLORS}
+                colors={CHART_COLORS}
             />
         </div>
     )

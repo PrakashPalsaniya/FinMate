@@ -1,5 +1,6 @@
 import axios from "axios"
 import { BASE_URL } from "./apiPath.js"
+import { getUserFriendlyErrorMessage } from "./errorMessage.js"
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -27,10 +28,14 @@ axiosInstance.interceptors.response.use(
         return response;
     }, (error) => {
         //Handle common errors globally
+        error.userMessage = getUserFriendlyErrorMessage(error)
+
         if (error.response) {
             if (error.response.status === 401) {
-                // Redirect to login page
-                window.location.href = "/login";
+                localStorage.removeItem("token");
+                if (window.location.pathname !== "/login") {
+                    window.location.href = "/login";
+                }
             } else if (error.response.status === 500) {
                 console.error("Server Error. Please try again later")
             }

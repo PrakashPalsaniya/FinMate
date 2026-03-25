@@ -23,7 +23,7 @@ const Dashboard = () => {
       if (response.data.success) {
         setDashboardData(response.data.data);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch dashboard data');
     } finally {
       setLoading(false);

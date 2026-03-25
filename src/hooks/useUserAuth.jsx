@@ -1,40 +1,20 @@
 import { useContext, useEffect } from "react"
 import { UserContext } from "../context/UserContext"
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axiosInstance.js"
-import { API_PATH } from "../utils/apiPath.js";
 
 export const useUserAuth = () => {
-    const { user, updateUser, clearUser } = useContext(UserContext);
+    const { loading, isAuthenticated } = useContext(UserContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user) return;
-
-        let isMounted = true;
-
-        const fetchUserInfo = async () => {
-            try {
-                const response = await axiosInstance.get(API_PATH.AUTH.GET_USER_INFO)
-
-                if (isMounted && response.data) {
-                    updateUser(response.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch user info:", error)
-                if (isMounted) {
-                    clearUser();
-                    navigate("/login");
-                }
-            }
+        if (loading) {
+            return;
         }
 
-        fetchUserInfo();
-
-        return () => {
-            isMounted = false
+        if (!isAuthenticated) {
+            navigate("/login", { replace: true });
         }
-    }, [updateUser, clearUser, navigate]);
+    }, [loading, isAuthenticated, navigate]);
 }
 
 

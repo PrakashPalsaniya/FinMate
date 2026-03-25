@@ -1,14 +1,15 @@
 
 
-export const BASE_URL =  'https://fin-mate-backend.onrender.com'
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 export const API_PATH = {
-    BASE_URL: 'https://fin-mate-backend.onrender.com',
+    BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
     AUTH: {
         LOGIN: "/api/v1/auth/login",
         REGISTER: "/api/v1/auth/register",
         SEND_OTP: "/api/v1/auth/send-otp",
         VERIFY_OTP: "/api/v1/auth/verify-otp",
         GET_USER_INFO: "/api/v1/auth/getUser",
+        EXCHANGE_GOOGLE_CODE: (code) => `/api/v1/auth/exchange-google-code?code=${encodeURIComponent(code)}`,
     },
     DASHBOARD: {
         GET_DATA: "/api/v1/dashboard",
@@ -16,14 +17,22 @@ export const API_PATH = {
     INCOME: {
         ADD_INCOME: "/api/v1/income/add",
         GET_ALL_INCOME: "/api/v1/income/get",
+        UPDATE_INCOME: (incomeId) => `/api/v1/income/${incomeId}`,
         DELETE_INCOME: (incomeId) => `/api/v1/income/${incomeId}`,
         DOWNLOAD_INCOME: "/api/v1/income/downloadexcel",
     },
     EXPENSE: {
         ADD_EXPENSE: "/api/v1/expense/add",
         GET_ALL_EXPENSE: "/api/v1/expense/get",
+        UPDATE_EXPENSE: (expenseId) => `/api/v1/expense/${expenseId}`,
         DELETE_EXPENSE: (expenseId) => `/api/v1/expense/${expenseId}`,
         DOWNLOAD_EXPENSE: "/api/v1/expense/downloadexcel",
+    },
+    BUDGETS: {
+        GET_ALL: "/api/v1/budgets",
+        CREATE: "/api/v1/budgets",
+        UPDATE: (budgetId) => `/api/v1/budgets/${budgetId}`,
+        DELETE: (budgetId) => `/api/v1/budgets/${budgetId}`,
     },
     IMAGE: {
         UPLOAD_IMAGE: "/api/v1/auth/upload-image",
@@ -34,15 +43,17 @@ export const API_PATH = {
     CHAT: {
         SEND_MESSAGE: "/api/v1/chat",
     },
-    GOALS: {
-        CREATE_GOAL: "/api/v1/goals",
-        GET_ALL_GOALS: "/api/v1/goals",
-        GET_GOAL_BY_ID: (goalId) => `/api/v1/goals/${goalId}`,
-        UPDATE_GOAL: (goalId) => `/api/v1/goals/${goalId}`,
-        DELETE_GOAL: (goalId) => `/api/v1/goals/${goalId}`,
-        UPDATE_GOAL_PROGRESS: (goalId) => `/api/v1/goals/${goalId}/progress`,
-        GET_GOAL_INSIGHTS: (goalId) => `/api/v1/goals/${goalId}/insights`,
-        GET_GOALS_SUMMARY: "/api/v1/goals/summary",
-        GET_GOALS_AI_INSIGHTS: "/api/v1/goals/ai-insights",
-    }
+    SETTINGS: {
+        GET_SETTINGS: "/api/v1/settings",
+        UPDATE_SETTINGS: "/api/v1/settings",
+    },
+    TELEGRAM: {
+        GET_STATUS: "/api/v1/telegram/status",
+        START_LINK: "/api/v1/telegram/link/start",
+        UNLINK: "/api/v1/telegram/link",
+    },
+    SUMMARY_DELIVERY: {
+        GET_HISTORY: "/api/v1/summary-delivery/history",
+        SEND: "/api/v1/summary-delivery/send",
+    },
 }

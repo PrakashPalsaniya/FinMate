@@ -1,47 +1,68 @@
-import { LuHandCoins, LuLayoutDashboard, LuLogOut, LuWalletMinimal, LuBrain, LuMessageCircle, LuTarget } from "react-icons/lu"
+import { LuHandCoins, LuLayoutDashboard, LuLogOut, LuWalletMinimal, LuBrain, LuMessageCircle, LuPiggyBank, LuSettings2 } from "react-icons/lu"
 
 export const SIDE_MENU_DATA = [
     {
         id: "01",
         label: "Dashboard",
         icon: LuLayoutDashboard,
-        path: "/dashboard"
+        path: "/dashboard",
+        group: "Workspace",
+        caption: "Overview, balance, and recent activity",
     },
     {
         id: "02",
         label: "Income",
         icon: LuWalletMinimal,
-        path: "/income"
+        path: "/income",
+        group: "Workspace",
+        caption: "Track what is coming in",
     },
     {
         id: "03",
         label: "Expense",
         icon: LuHandCoins,
-        path: "/expense"
+        path: "/expense",
+        group: "Workspace",
+        caption: "Watch spending and outflow",
     },
     {
         id: "04",
-        label: "AI Summary",
-        icon: LuBrain,
-        path: "/ai-summary"
+        label: "Budgets",
+        icon: LuPiggyBank,
+        path: "/budgets",
+        group: "Workspace",
+        caption: "Plan monthly spending limits",
     },
     {
         id: "05",
-        label: "Goals",
-        icon: LuTarget,
-        path: "/goals"
+        label: "AI Summary",
+        icon: LuBrain,
+        path: "/ai-summary",
+        group: "Insights",
+        caption: "Get a fast, smart financial read",
     },
     {
         id: "06",
         label: "Finance Buddy",
         icon: LuMessageCircle,
-        path: "/chat"
+        path: "/chat",
+        group: "Insights",
+        caption: "Ask questions about your money",
+    },
+    {
+        id: "07",
+        label: "Settings",
+        icon: LuSettings2,
+        path: "/settings",
+        group: "Account",
+        caption: "Timezone and notification controls",
     },
 
     {
-        id: "07",
+        id: "08",
         label: "Logout",
         icon: LuLogOut,
-        path: "logout"
+        path: "logout",
+        group: "Account",
     }
 ]

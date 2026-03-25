@@ -2,11 +2,12 @@ import React, { useEffect, useContext, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import axiosInstance from '../utils/axiosInstance';
+import { API_PATH } from '../utils/apiPath';
 
 const AuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { updateUser } = useContext(UserContext);
+  const { login } = useContext(UserContext);
   const [error, setError] = useState(null);
   const hasProcessed = useRef(false);
 
@@ -16,41 +17,30 @@ const AuthCallback = () => {
       if (hasProcessed.current) return;
       hasProcessed.current = true;
 
-      const token = searchParams.get('token');
-      const userParam = searchParams.get('user');
+      const code = searchParams.get('code');
 
-      console.log('AuthCallback - token:', !!token, 'userParam:', !!userParam); // Debug log
-
-      if (token && userParam) {
+      if (code) {
         try {
-          const user = JSON.parse(decodeURIComponent(userParam));
-          console.log('Parsed user:', user); // Debug log - only once now
+          const response = await axiosInstance.get(API_PATH.AUTH.EXCHANGE_GOOGLE_CODE(code));
+          const { token, user } = response.data;
 
-          // Store token in localStorage
-          localStorage.setItem('token', token);
-
-          // Update user context
-          updateUser(user);
-
-          // Set authorization header for future requests
-          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-          // Redirect to dashboard
-          navigate('/dashboard');
+          login(user, token);
+          navigate('/dashboard', { replace: true });
         } catch (error) {
           console.error('Error processing auth callback:', error);
+          localStorage.removeItem('token');
           setError('Authentication failed. Please try again.');
           setTimeout(() => navigate('/login'), 3000);
         }
       } else {
-        console.error('Missing token or user param');
+        console.error('Missing authentication code');
         setError('Authentication failed. Missing credentials.');
         setTimeout(() => navigate('/login'), 3000);
       }
     };
 
     handleCallback();
-  }, []); // Empty dependency array to run only once
+  }, [login, navigate, searchParams]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

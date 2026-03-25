@@ -28,7 +28,7 @@ const DownloadExpenseBtn = () => {
       window.URL.revokeObjectURL(url);
 
       toast.success('Expense report downloaded successfully!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to download report');
     } finally {
       setLoading(false);

@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LuSend, LuBot, LuUser, LuGlobe } from 'react-icons/lu';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATH } from '../../utils/apiPath';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { useUserAuth } from '../../hooks/useUserAuth';
 
 
 const Chat = () => {
+  useUserAuth();
+
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +52,7 @@ const Chat = () => {
       }
     } catch (error) {
       console.error('Chat error:', error);
-      toast.error('Something went wrong. Please try again.');
+      toast.error(error?.userMessage || 'Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -66,39 +69,42 @@ const Chat = () => {
 
   return (
     <DashboardLayout activeMenu="Finance Buddy">
-      <div className='flex flex-col h-[calc(100vh-80px)] sm:h-[calc(100vh-90px)] md:h-[calc(100vh-100px)] overflow-hidden'>
-        {/* Sticky Header - Fixed at top */}
-        <div className='sticky top-0 z-10 bg-white border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 md:py-4 flex-shrink-0'>
-          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3'>
-            <h1 className='text-xl md:text-2xl font-bold text-gray-800'>Finance Buddy</h1>
+      <div className='page-shell'>
+        <div className='card flex min-h-[calc(100dvh-8.4rem)] flex-col overflow-hidden sm:min-h-[calc(100dvh-9rem)] lg:min-h-[calc(100dvh-9.5rem)]'>
+          <div className='border-b border-slate-200/80 px-4 py-4 sm:px-5 sm:py-5 md:px-6'>
+            <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+              <div>
+                <p className='text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400'>Assistant</p>
+                <h1 className='mt-2 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl'>Finance Buddy</h1>
+                <p className='mt-1.5 text-[13px] leading-6 text-slate-500 sm:text-sm'>
+                  Ask quick questions about spending, budgeting, and patterns in your data.
+                </p>
+              </div>
 
-            {/* Language Selector - Always visible */}
-            <div className='flex items-center gap-2 w-full sm:w-auto'>
-              <LuGlobe className='text-gray-600 text-base md:text-lg flex-shrink-0' />
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className='flex-1 sm:flex-none px-3 py-1.5 md:py-2 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-primary bg-white'
-              >
-                <option value='english'>English</option>
-                <option value='hinglish'>Hinglish</option>
-              </select>
+              <div className='flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-3 py-2.5 sm:w-auto'>
+                <LuGlobe className='text-slate-500 text-base flex-shrink-0' />
+                <select
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  className='min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-700 outline-none sm:flex-none'
+                >
+                  <option value='english'>English</option>
+                  <option value='hinglish'>Hinglish</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Chat Container */}
-        <div className='flex-1 flex flex-col bg-white overflow-hidden'>
-          {/* Chat Messages - Scrollable Area */}
-          <div className='flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-4 md:px-6 py-3 md:py-4'>
-            <div className='max-w-full space-y-2 md:space-y-3'>
+          <div className='flex-1 flex flex-col overflow-hidden'>
+            <div className='flex-1 overflow-y-auto overflow-x-hidden px-3 py-3 sm:px-4 sm:py-4 md:px-6'>
+            <div className='max-w-full space-y-2.5 sm:space-y-3'>
               {messages.length === 0 ? (
-                <div className='flex flex-col items-center justify-center h-full text-gray-500 px-4'>
-                  <LuBot className='text-4xl md:text-6xl mb-3 md:mb-4 text-primary' />
-                  <h3 className='text-lg md:text-xl font-semibold mb-1 md:mb-2 text-center'>
+                <div className='flex h-full flex-col items-center justify-center px-4 py-6 text-gray-500'>
+                  <LuBot className='mb-3 text-4xl text-primary md:mb-4 md:text-6xl' />
+                  <h3 className='mb-1 text-lg font-semibold text-center md:mb-2 md:text-xl'>
                     Welcome to Finance Buddy!
                   </h3>
-                  <p className='text-xs sm:text-sm md:text-base text-center max-w-md'>
+                  <p className='max-w-md text-center text-[13px] leading-6 sm:text-sm md:text-base'>
                     I'm your personal financial assistant. Ask me anything about your finances,
                     budgeting tips, or insights based on your data!
                   </p>
@@ -117,13 +123,13 @@ const Chat = () => {
                       </div>
                     )}
                     <div
-                      className={`max-w-[75%] sm:max-w-[70%] md:max-w-md lg:max-w-lg px-3 md:px-4 py-2 md:py-2.5 rounded-lg ${
+                      className={`max-w-[82%] sm:max-w-[72%] md:max-w-md lg:max-w-lg px-3 py-2 md:px-4 md:py-2.5 rounded-2xl ${
                         msg.sender === 'user'
-                          ? 'bg-primary text-white rounded-tr-none'
-                          : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                          ? 'bg-primary text-white rounded-tr-md'
+                          : 'bg-gray-100 text-gray-800 rounded-tl-md'
                       }`}
                     >
-                      <p className='whitespace-pre-wrap text-xs sm:text-sm md:text-base break-words'>
+                      <p className='whitespace-pre-wrap break-words text-[13px] leading-6 sm:text-sm md:text-base'>
                         {msg.text}
                       </p>
                     </div>
@@ -140,7 +146,7 @@ const Chat = () => {
                   <div className='w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0'>
                     <LuBot className='text-white text-xs md:text-sm' />
                   </div>
-                  <div className='bg-gray-100 px-3 md:px-4 py-2 md:py-2.5 rounded-lg rounded-tl-none'>
+                  <div className='bg-gray-100 px-3 py-2 md:px-4 md:py-2.5 rounded-2xl rounded-tl-md'>
                     <div className='flex items-center gap-2'>
                       <div className='flex space-x-1'>
                         <div className='w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce'></div>
@@ -156,28 +162,28 @@ const Chat = () => {
             </div>
           </div>
 
-          {/* Input Area - Fixed at bottom */}
-          <div className='border-t border-gray-200 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 bg-white flex-shrink-0'>
-            <div className='flex gap-2 max-w-full'>
+          <div className='border-t border-slate-200/80 bg-white px-3 py-3 sm:px-4 sm:py-4 md:px-6 flex-shrink-0'>
+            <div className='flex gap-2 max-w-full items-end'>
               <input
                 type='text'
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyPress}
                 placeholder='Ask Finance Buddy anything...'
-                className='flex-1 min-w-0 px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500'
+                className='flex-1 min-w-0 rounded-2xl border border-slate-200/80 px-3 py-2.5 text-[13px] text-slate-800 shadow-[0_16px_36px_-30px_rgba(15,23,42,0.25)] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-gray-50 disabled:text-gray-500 sm:px-4 sm:text-sm md:text-base'
                 disabled={isLoading}
               />
               <button
                 onClick={handleSendMessage}
                 disabled={isLoading || !inputMessage.trim()}
-                className='px-3 sm:px-4 md:px-5 py-2 md:py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 md:gap-2 transition-colors flex-shrink-0'
+                className='rounded-2xl bg-primary px-3 py-2.5 text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:px-4 md:px-5 md:py-3 transition-colors flex-shrink-0'
               >
                 <LuSend className='text-sm md:text-base' />
                 <span className='hidden sm:inline text-sm md:text-base'>Send</span>
               </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </DashboardLayout>

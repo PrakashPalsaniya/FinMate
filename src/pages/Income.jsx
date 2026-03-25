@@ -23,7 +23,7 @@ const Income = () => {
       if (response.data.success) {
         setIncomes(response.data.data);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch incomes');
     } finally {
       setLoading(false);

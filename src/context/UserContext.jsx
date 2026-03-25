@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATH } from "../utils/apiPath";
 
@@ -6,9 +7,11 @@ export const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const hasBootstrappedAuth = useRef(false);
 
     const updateUser = (userData) => {
-        setUser(userData);
+        setUser(userData?.user ?? userData ?? null);
     }
 
     const clearUser = () => {
@@ -18,37 +21,62 @@ const UserProvider = ({ children }) => {
     const login = (userData, token) => {
         localStorage.setItem('token', token);
         setUser(userData);
+        setLoading(false);
     }
 
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);
+        setLoading(false);
     }
 
-    useEffect(() => {
+    const bootstrapAuth = useCallback(async () => {
         const token = localStorage.getItem('token');
-        if (token && !user) {
-            const fetchUser = async () => {
-                try {
-                    const response = await axiosInstance.get(API_PATH.AUTH.GET_USER_INFO);
-                    setUser(response.data.user);
-                } catch (error) {
-                    console.error("Failed to fetch user info:", error);
-                    localStorage.removeItem('token');
-                }
-            };
-            fetchUser();
+
+        if (!token) {
+            setUser(null);
+            setLoading(false);
+            return false;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await axiosInstance.get(API_PATH.AUTH.GET_USER_INFO);
+            setUser(response.data?.user ?? null);
+            return Boolean(response.data?.user);
+        } catch (error) {
+            console.error("Failed to fetch user info:", error);
+            localStorage.removeItem('token');
+            setUser(null);
+            return false;
+        } finally {
+            setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        if (hasBootstrappedAuth.current) {
+            return;
+        }
+
+        hasBootstrappedAuth.current = true;
+        bootstrapAuth();
+    }, [bootstrapAuth]);
+
+    const isAuthenticated = Boolean(user);
 
     return (
         <UserContext.Provider
             value={{
                 user,
+                loading,
+                isAuthenticated,
                 updateUser,
                 clearUser,
                 login,
                 logout,
+                bootstrapAuth,
             }}
         >
             {children}
@@ -82,4 +110,3 @@ export default UserProvider;
 // Exports a UserProvider component that wraps the children components, making the user data and functions available anywhere inside the app.
 
 // Any component inside this provider can easily access or update the user’s information through the context, without needing to pass props down manually.
-

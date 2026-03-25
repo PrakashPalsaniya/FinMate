@@ -16,21 +16,21 @@ const ExpenseOverview = ({ transactions, onExpenseIncome }) => {
 
     return (
         <div className="card">
-            <div className="flex items-center justify-between">
-                <div className="">
-                    <h5 className="text-lg">Expense Overview</h5>
-                    <p className="text-xs md:text-sm text-gray-400 mt-0.5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h5 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">Expense Overview</h5>
+                    <p className="mt-1.5 text-[13px] leading-6 text-slate-500 sm:text-sm">
                         Track your spending trends over time and gain insights over your money.
                     </p>
                 </div>
 
-                <button className="add-btn" onClick={onExpenseIncome}>
+                <button className="add-btn self-start" onClick={onExpenseIncome}>
                     <LuPlus className='text-lg' />
                     Add Expense
                 </button>
             </div>
 
-            <div className="mt-10">
+            <div className="mt-5 sm:mt-8">
                 <CustomLineChart data={chartData} />
             </div>
         </div>

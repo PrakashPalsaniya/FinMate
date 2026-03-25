@@ -28,7 +28,7 @@ const DownloadIncomeBtn = () => {
       window.URL.revokeObjectURL(url);
 
       toast.success('Income report downloaded successfully!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to download report');
     } finally {
       setLoading(false);

@@ -1,4 +1,3 @@
-import { data } from "react-router-dom";
 import { API_PATH } from "./apiPath";
 import axiosInstance from "./axiosInstance";
 

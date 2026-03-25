@@ -2,6 +2,9 @@ import moment from "moment";
 import { LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp, LuUtensils, LuHouse, LuGamepad2, LuCar, LuZap, LuHeart, LuGraduationCap, LuShoppingBag } from "react-icons/lu";
 
 
+export const CHART_COLORS = ["#0f766e", "#14b8a6", "#f59e0b", "#0f172a", "#64748b"];
+export const INR_SYMBOL = "\u20B9";
+
 
 export const validEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+/;
@@ -38,6 +41,26 @@ export const addIndianThousandSeparator = (number) => {
 
     let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
     return decimal ? formatted + "." + decimal : formatted;
+}
+
+export const formatCurrency = (number, options = {}) => {
+    const amount = Number(number ?? 0);
+
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0,
+        ...options,
+    }).format(amount);
+}
+
+export const formatCompactAmount = (number) => {
+    const amount = Number(number ?? 0);
+
+    return new Intl.NumberFormat("en-IN", {
+        notation: "compact",
+        maximumFractionDigits: amount >= 100000 ? 1 : 0,
+    }).format(amount);
 }
 
 export const prepareExpenseBarChartData = (data = []) => {

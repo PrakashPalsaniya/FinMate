@@ -16,21 +16,21 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
 
     return (
         <div className="card">
-            <div className="flex items-center justify-between">
-                <div className="">
-                    <h5 className="text-lg">Income Overview</h5>
-                    <p className="text-xs md:text-sm text-gray-400 mt-0.5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h5 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">Income Overview</h5>
+                    <p className="mt-1.5 text-[13px] leading-6 text-slate-500 sm:text-sm">
                         Track your earning over time and track your income trends.
                     </p>
                 </div>
 
-                <button className="add-btn" onClick={onAddIncome}>
+                <button className="add-btn self-start" onClick={onAddIncome}>
                     <LuPlus className='text-lg' />
                     Add Income
                 </button>
             </div>
 
-            <div className="mt-10">
+            <div className="mt-5 sm:mt-8">
                 <CustomBarChart data={chartData} dataKey={"category"} />
             </div>
         </div>

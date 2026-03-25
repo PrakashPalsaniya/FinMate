@@ -1,76 +1,74 @@
 import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout from '../../components/layouts/AuthLayout'
-import Input from '../../components/inputs/Input';
-import { validEmail } from '../../utils/helper';
+import Input from '../../components/inputs/Input'
+import { validEmail } from '../../utils/helper'
 import axiosInstance from "../../utils/axiosInstance.js"
-import { API_PATH } from '../../utils/apiPath.js';
+import { API_PATH } from '../../utils/apiPath.js'
 import { UserContext } from '../../context/UserContext.jsx'
+import { getUserFriendlyErrorMessage } from '../../utils/errorMessage.js'
 
 const Login = () => {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState(null)
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const { login } = useContext(UserContext)
+  const navigate = useNavigate()
 
-  const { updateUser } = useContext(UserContext);
-
-  const navigate = useNavigate();
-
-  // Handle Login Form Submission
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!validEmail(email)) {
-      setError("Please enter a valid email address");
-      return;
+      setError("Please enter a valid email address")
+      return
     }
 
     if (!password) {
-      setError("Please enter a password ");
-      return;
+      setError("Please enter your password")
+      return
     }
 
-    setError("");
+    setError("")
 
-    // Login API call
     try {
       const response = await axiosInstance.post(API_PATH.AUTH.LOGIN, {
         email,
         password,
-      });
-      const { token, user } = response.data;
+      })
+
+      const { token, user } = response.data
 
       if (token) {
-        localStorage.setItem("token", token);
-        updateUser(user);
-        navigate("/dashboard");
+        login(user, token)
+        navigate("/dashboard", { replace: true })
       }
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message);
-      } else {
-        setError(`${error.message}, please try again later`)
-      }
+      setError(
+        getUserFriendlyErrorMessage(error, {
+          fallback: 'Sign in failed. Please try again later.',
+          allowUnauthorizedMessage: true,
+        })
+      )
     }
   }
 
   return (
     <AuthLayout>
-      <div className="lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center">
-        <h3 className='text-2xl font-semibold text-black'>Welcome Back</h3>
-        <p className='text-[13px] text-slate-700 mt-[5px] mb-6'>
-          Enter your details to login
+      <div>
+        <p className='page-eyebrow'>Welcome back</p>
+        <h2 className='mt-3 text-3xl font-semibold tracking-tight text-slate-900'>Sign in to your workspace</h2>
+        <p className='mt-3 text-sm leading-7 text-slate-500'>
+          Pick up where you left off and get a fresh view of your income, expenses, and summaries.
         </p>
 
-        <form onSubmit={handleLogin}>
-
+        <form className='mt-8' onSubmit={handleLogin}>
           <Input
-            type="text"
+            type="email"
             value={email}
             onChange={({ target }) => setEmail(target.value)}
-            label="Email Address"
-            placeholder='enter your email'
+            label="Email address"
+            placeholder='you@example.com'
           />
 
           <Input
@@ -78,34 +76,36 @@ const Login = () => {
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             label="Password"
-            placeholder='password'
+            placeholder='Enter your password'
           />
 
-          {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
+          {error && (
+            <div className='mb-4 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600'>
+              {error}
+            </div>
+          )}
 
           <button type='submit' className='btn-primary cursor-pointer'>
-            LOGIN
+            Sign in
           </button>
-
         </form>
 
-        {/* Google Login Button */}
-        <div className="mt-6">
+        <div className="mt-8">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="bg-white px-3 text-slate-400">or continue with</span>
             </div>
           </div>
 
           <button
             type="button"
             onClick={() => window.location.href = `${API_PATH.BASE_URL}/api/v1/auth/google`}
-            className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition"
+            className="btn-secondary mt-4 w-full"
           >
-            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -115,11 +115,10 @@ const Login = () => {
           </button>
         </div>
 
-        <p className='text-[13px] text-slate-800 mt-3'>
-          Don't have an account?
-          <Link className='font-medium text-primary underline' to="/signUp"> Sign Up</Link>
+        <p className='mt-6 text-sm text-slate-600'>
+          New here?
+          <Link className='ml-1 font-semibold text-primary hover:text-primary-deep' to="/signUp">Create an account</Link>
         </p>
-
       </div>
     </AuthLayout>
   )
