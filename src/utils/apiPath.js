@@ -1,8 +1,33 @@
+const normalizeBaseUrl = (value = "") => String(value || "").trim().replace(/\/+$/, "")
 
+const resolveBaseUrl = () => {
+    const configuredUrl = normalizeBaseUrl(import.meta.env.VITE_API_URL)
 
-export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+    if (configuredUrl) {
+        return configuredUrl
+    }
+
+    if (typeof window !== "undefined") {
+        const { hostname, origin } = window.location
+        const isLocalDevelopment =
+            hostname === "localhost" ||
+            hostname === "127.0.0.1" ||
+            hostname === "0.0.0.0"
+
+        if (isLocalDevelopment) {
+            return "http://localhost:5000"
+        }
+
+        console.warn("VITE_API_URL is not set. Falling back to same-origin API requests.")
+        return normalizeBaseUrl(origin)
+    }
+
+    return "http://localhost:5000"
+}
+
+export const BASE_URL = resolveBaseUrl()
 export const API_PATH = {
-    BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+    BASE_URL,
     AUTH: {
         LOGIN: "/api/v1/auth/login",
         REGISTER: "/api/v1/auth/register",
