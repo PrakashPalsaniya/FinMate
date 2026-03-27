@@ -3,19 +3,16 @@ import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import AuthLayout from '../../components/layouts/AuthLayout'
 import Input from '../../components/inputs/Input'
-import ProfilePhotoSelector from '../../components/inputs/ProfilePhotoSelector'
 import { validEmail } from '../../utils/helper'
 import axiosInstance from '../../utils/axiosInstance'
 import { API_PATH } from '../../utils/apiPath'
 import { UserContext } from '../../context/UserContext'
-import uploadImage from '../../utils/uploadImage'
 import { getUserFriendlyErrorMessage } from '../../utils/errorMessage'
 
 const SignUp = () => {
   const navigate = useNavigate()
   const { login } = useContext(UserContext)
 
-  const [profilePic, setProfilePic] = useState("")
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -80,19 +77,11 @@ const SignUp = () => {
     setError("")
     setLoading(true)
 
-    let profileImageUrl = ""
-
     try {
-      if (profilePic) {
-        const imgUploadRes = await uploadImage(profilePic)
-        profileImageUrl = imgUploadRes.imageUrl || ""
-      }
-
       const response = await axiosInstance.post(API_PATH.AUTH.VERIFY_OTP, {
         fullName,
         email,
         password,
-        profileImageUrl,
         otp,
       })
 
@@ -154,8 +143,6 @@ const SignUp = () => {
         <div className='mt-8'>
           {step === 1 ? (
             <form onSubmit={handleSendOTP}>
-              <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
-
               <Input
                 type="text"
                 value={fullName}
