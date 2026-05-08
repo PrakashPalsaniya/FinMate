@@ -37,52 +37,47 @@ const SideMenu = ({ activeMenu, mobile = false, onNavigate }) => {
       className={
         mobile
           ? 'flex h-full min-h-0 flex-col overflow-hidden'
-          : 'sticky top-[104px] h-[calc(100vh-128px)] self-start overflow-hidden rounded-[30px] border border-white/80 bg-[rgba(255,255,255,0.84)] p-3 shadow-[0_28px_80px_-46px_rgba(15,23,42,0.42)] backdrop-blur-2xl'
+          : 'sticky top-16 h-[calc(100vh-100px)] self-start overflow-hidden rounded-[28px] border border-white/40 bg-white/60 p-3 shadow-xl backdrop-blur-3xl'
       }
     >
       <div className='flex h-full min-h-0 flex-col'>
-        <div className='flex-1 overflow-y-auto overscroll-contain pr-1'>
+        <div className='flex-1 overflow-y-auto overscroll-contain pr-1 scrollbar-hide'>
           {menuSections.map((section, index) => (
-            <div key={section.title} className={index === 0 ? "" : "mt-5"}>
-              <div className='mb-2 px-2'>
-                <p className='text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400'>{section.title}</p>
+            <div key={section.title} className={index === 0 ? "" : "mt-6"}>
+              <div className='mb-2 px-3'>
+                <p className='text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400'>{section.title}</p>
               </div>
-
-              <div className='space-y-1.5'>
+ 
+              <div className='space-y-1'>
                 {section.items.map((item) => {
                   const isActive = activeMenu === item.label
 
-                  return (
+                   return (
                     <button
                       key={item.id}
-                      className={`group flex w-full items-center gap-3 rounded-[22px] border px-3.5 py-3 text-left transition ${
+                      className={`group flex w-full items-center gap-3 rounded-[20px] border px-3 py-2.5 text-left transition-all duration-200 ${
                         isActive
-                          ? "border-primary/15 bg-primary text-white shadow-[0_22px_48px_-30px_rgba(15,118,110,0.72)]"
-                          : "border-transparent bg-transparent text-slate-600 hover:border-slate-200/80 hover:bg-slate-50/90 hover:text-slate-900"
+                          ? "border-primary/10 bg-[#0f172a] text-white shadow-lg"
+                          : "border-transparent bg-transparent text-slate-500 hover:bg-white hover:text-slate-900"
                       }`}
                       onClick={() => handleClick(item.path)}
                     >
                       <span
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[18px] text-lg transition ${
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[16px] text-lg transition-all duration-200 ${
                           isActive
-                            ? "bg-white/14 text-white"
-                            : "bg-slate-100 text-slate-600 group-hover:bg-white group-hover:text-primary"
+                            ? "bg-primary text-white"
+                            : "bg-slate-100 text-slate-500 group-hover:bg-primary/10 group-hover:text-primary"
                         }`}
                       >
                         <item.icon />
                       </span>
-
+ 
                       <span className='min-w-0 flex-1'>
-                        <span className='block text-sm font-semibold'>{item.label}</span>
-                        {item.caption && (
-                          <span className={`mt-1 block text-xs leading-5 ${isActive ? "text-white/78" : "text-slate-500"}`}>
-                            {item.caption}
-                          </span>
-                        )}
+                        <span className={`block text-[14px] font-bold tracking-tight ${isActive ? "text-white" : "text-slate-700"}`}>{item.label}</span>
                       </span>
-
-                      <span className={`shrink-0 ${isActive ? "text-white/90" : "text-slate-300 group-hover:text-primary"}`}>
-                        <LuArrowRight className='text-base' />
+ 
+                      <span className={`shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 ${isActive ? "text-white/90" : "text-slate-300 group-hover:text-primary"}`}>
+                        <LuArrowRight className='text-sm' />
                       </span>
                     </button>
                   )
@@ -91,21 +86,20 @@ const SideMenu = ({ activeMenu, mobile = false, onNavigate }) => {
             </div>
           ))}
         </div>
-
+ 
         {logoutItem && (
-          <div className='mt-4 border-t border-slate-200/70 pt-4'>
+          <div className='mt-4 border-t border-slate-200/50 pt-4'>
             <button
-              className='group flex w-full items-center gap-3 rounded-[22px] border border-red-100 bg-red-50/75 px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50'
+              className='group flex w-full items-center gap-3 rounded-[20px] border border-red-50 bg-red-50/30 px-3 py-3 text-left text-[14px] font-bold text-red-600 transition-all duration-200 hover:bg-red-50'
               onClick={() => handleClick(logoutItem.path)}
             >
-              <span className='flex h-10 w-10 items-center justify-center rounded-[18px] bg-white text-lg shadow-[0_18px_40px_-28px_rgba(239,68,68,0.58)]'>
+              <span className='flex h-9 w-9 items-center justify-center rounded-[16px] bg-white text-lg text-red-500 shadow-sm'>
                 <LuLogOut />
               </span>
               <span className='flex-1'>
-                <span className='block'>Logout</span>
-                <span className='mt-1 block text-xs font-medium text-red-500/80'>End this session safely</span>
+                <span className='block leading-tight'>Logout</span>
               </span>
-              <LuArrowRight className='text-base text-red-400' />
+              <LuArrowRight className='text-base text-red-200 transition-transform group-hover:translate-x-0.5' />
             </button>
           </div>
         )}

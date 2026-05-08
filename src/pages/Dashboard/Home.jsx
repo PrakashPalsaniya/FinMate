@@ -1,18 +1,16 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IoMdCard } from "react-icons/io"
-import { LuArrowDownRight, LuArrowUpRight, LuBadgeIndianRupee, LuHandCoins, LuWalletMinimal } from 'react-icons/lu'
+import { LuArrowDownRight, LuArrowUpRight, LuBadgeIndianRupee, LuHandCoins, LuWalletMinimal, LuSparkles, LuTrendingDown } from 'react-icons/lu'
 import DashboardLayout from '../../components/layouts/DashboardLayout'
 import InfoCard from '../../components/Cards/InfoCard'
 import SkeletonCard from '../../components/SkeletonCard'
-import RecentTransactions from '../../components/Dashboard/RecentTransactions.jsx'
+import TabbedActivity from '../../components/Dashboard/TabbedActivity.jsx'
 import FinanceOverview from '../../components/Dashboard/FinanceOverview.jsx'
-import ExpenseTransaction from '../../components/Dashboard/ExpenseTransaction.jsx'
+import BudgetSnapshot from '../../components/Dashboard/BudgetSnapshot.jsx'
+import CategoryPieChart from '../../components/Dashboard/CategoryPieChart.jsx'
 import Last30DaysExpenses from '../../components/Dashboard/Last30DaysExpenses.jsx'
 import RecentIncomeWithChart from '../../components/Dashboard/RecentIncomeWithChart.jsx'
-import RecentIncome from '../../components/Dashboard/RecentIncome.jsx'
-import CategoryPieChart from '../../components/Dashboard/CategoryPieChart.jsx'
-import BudgetSnapshot from '../../components/Dashboard/BudgetSnapshot.jsx'
 import { UserContext } from '../../context/UserContext'
 import { useUserAuth } from '../../hooks/useUserAuth'
 import axiosInstance from '../../utils/axiosInstance'
@@ -30,15 +28,11 @@ const Home = () => {
 
   const fetchDashboardData = useCallback(async () => {
     setLoading(true)
-
     try {
       const response = await axiosInstance.get(API_PATH.DASHBOARD.GET_DATA)
-
-      if (response.data) {
-        setDashboardData(response.data)
-      }
+      if (response.data) setDashboardData(response.data)
     } catch (error) {
-      console.log("something went wrong. Please try again ", error)
+      console.log("Dashboard fetch error:", error)
     } finally {
       setLoading(false)
     }
@@ -68,148 +62,126 @@ const Home = () => {
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className='page-shell'>
-        <section className='relative overflow-hidden rounded-[26px] bg-[linear-gradient(145deg,#0f172a_0%,#111827_55%,#0f766e_100%)] px-3.5 py-4 text-white shadow-[0_40px_100px_-44px_rgba(15,23,42,0.75)] sm:px-6 sm:py-6 md:rounded-[34px] md:px-8 md:py-8 xl:px-10 xl:py-9'>
-          <div className='absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.28),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.16),transparent_24%)]' />
-          <div className='absolute -left-8 top-8 h-40 w-40 rounded-full bg-white/8 blur-3xl' />
-          <div className='absolute bottom-0 right-0 h-56 w-56 rounded-full bg-primary/20 blur-3xl' />
-
-          <div className='relative flex flex-col gap-4 sm:gap-6 xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(380px,460px)] xl:items-center xl:gap-8'>
-            <div className='max-w-3xl xl:max-w-2xl'>
-              <span className='surface-chip border-white/12 bg-white/8 text-white/80'>
-                <LuBadgeIndianRupee className='text-sm text-accent' />
-                Daily money overview
-              </span>
-              <h1 className='mt-3 text-[1.55rem] font-semibold tracking-tight text-white sm:mt-4 sm:text-[2.35rem] md:mt-5 md:text-5xl'>
-                {greeting}, {firstName}.
-              </h1>
-              <p className='mt-2.5 max-w-2xl text-[12px] leading-5 text-white/72 sm:mt-3 sm:text-sm sm:leading-7 md:mt-4 md:text-base'>
-                Your dashboard is tuned for faster decisions now. Here is the latest read on balance, flow, and where your money is concentrating.
-              </p>
-
-              <div className='mt-3.5 flex flex-col gap-2 sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-3 xl:mt-7'>
-                <button className='btn-primary !rounded-full !px-5 sm:!w-auto' onClick={() => navigate("/income")}>
-                  <LuArrowUpRight className='text-base' />
-                  Add income
-                </button>
-                <button className='btn-secondary !rounded-full !border-white/15 !bg-white/8 !px-5 !text-white hover:!border-white/25 hover:!text-white sm:!w-auto' onClick={() => navigate("/expense")}>
-                  <LuArrowDownRight className='text-base' />
-                  Track expense
-                </button>
-              </div>
-            </div>
-
-            <div className='grid grid-cols-1 gap-2 min-[360px]:grid-cols-2 sm:gap-3 xl:w-full'>
-              <div className='rounded-[20px] border border-white/10 bg-white/8 p-3 backdrop-blur-xl sm:rounded-[26px] sm:p-4 xl:min-h-[158px]'>
-                <p className='text-xs font-semibold uppercase tracking-[0.22em] text-white/55'>Savings rate</p>
-                <p className='mt-2 text-lg font-semibold tracking-tight text-white sm:mt-3 sm:text-3xl'>{loading ? "--" : `${savingsRate}%`}</p>
-                <p className='mt-1.5 hidden text-[11px] leading-5 text-white/65 sm:mt-2 sm:block sm:text-sm'>How much income is still staying with you.</p>
-              </div>
-              <div className='rounded-[20px] border border-white/10 bg-white/8 p-3 backdrop-blur-xl sm:rounded-[26px] sm:p-4 xl:min-h-[158px]'>
-                <p className='text-xs font-semibold uppercase tracking-[0.22em] text-white/55'>Tracked volume</p>
-                <p className='mt-2 text-lg font-semibold tracking-tight text-white sm:mt-3 sm:text-3xl'>{loading ? "--" : formatCompactAmount(trackedVolume)}</p>
-                <p className='mt-1.5 hidden text-[11px] leading-5 text-white/65 sm:mt-2 sm:block sm:text-sm'>Total movement already captured.</p>
-              </div>
-              <div className='rounded-[20px] border border-white/10 bg-white/8 p-3 backdrop-blur-xl sm:rounded-[26px] sm:p-4 xl:min-h-[158px]'>
-                <p className='text-xs font-semibold uppercase tracking-[0.22em] text-white/55'>Category pulse</p>
-                <p className='mt-2 text-[14px] font-semibold tracking-tight text-white sm:mt-3 sm:text-lg'>{loading ? "Loading..." : topExpenseCategory}</p>
-                <p className='mt-1.5 hidden text-[11px] leading-5 text-white/65 sm:mt-2 sm:block sm:text-sm'>Most visible expense pattern right now.</p>
-              </div>
-              <div className='rounded-[20px] border border-white/10 bg-white/8 p-3 backdrop-blur-xl sm:rounded-[26px] sm:p-4 xl:min-h-[158px]'>
-                <p className='text-xs font-semibold uppercase tracking-[0.22em] text-white/55'>Coverage</p>
-                <p className='mt-2 text-lg font-semibold tracking-tight text-white sm:mt-3 sm:text-3xl'>{loading ? "--" : totalCategories}</p>
-                <p className='mt-1.5 hidden text-[11px] leading-5 text-white/65 sm:mt-2 sm:block sm:text-sm'>Tracked income and expense categories.</p>
-              </div>
-            </div>
+        <div className='page-header'>
+          <div>
+            <p className='page-eyebrow'>Portfolio Pulse</p>
+            <h1 className='page-title'>{greeting}, {firstName}</h1>
+            <p className='page-subtitle'>
+                Here is the real-time status of your liquidity and spending behavior.
+            </p>
           </div>
-        </section>
 
-        <div className='grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-3 xl:gap-6'>
-          {loading ? (
-            <>
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-            </>
-          ) : (
+          <div className='flex items-center gap-3'>
+            <button className='btn-primary !px-6' onClick={() => navigate("/income")}>
+              <LuArrowUpRight /> Add Income
+            </button>
+            <button className='btn-secondary !px-6' onClick={() => navigate("/expense")}>
+              <LuArrowDownRight /> Track Expense
+            </button>
+          </div>
+        </div>
+
+        {/* Primary Metrics */}
+        <div className='grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4'>
+          {loading ? [1, 2, 3].map(i => <SkeletonCard key={i} />) : (
             <>
               <InfoCard
-                icon={<IoMdCard />}
-                label="Total Balance"
-                value={formatCurrency(totalBalance)}
-                tone="primary"
-                description="What is currently left after combining your tracked income and expenses."
-                badge="Available right now"
+                icon={<IoMdCard />} label="Total Balance" value={formatCurrency(totalBalance)}
+                tone="primary" description="Available liquidity" badge="Balance"
               />
               <InfoCard
-                icon={<LuWalletMinimal />}
-                label="Total Income"
-                value={formatCurrency(totalIncome)}
-                tone="success"
-                description="Everything you have recorded coming in across your active categories."
-                badge="Money in"
+                icon={<LuWalletMinimal />} label="Total Income" value={formatCurrency(totalIncome)}
+                tone="success" description="Monthly inflow" badge="Income"
               />
               <InfoCard
-                icon={<LuHandCoins />}
-                label="Total Expense"
-                value={formatCurrency(totalExpenses)}
-                tone="danger"
-                description="All outgoing money recorded so you can spot pressure early."
-                badge="Money out"
+                icon={<LuHandCoins />} label="Total Expense" value={formatCurrency(totalExpenses)}
+                tone="danger" description="Monthly burn" badge="Expense"
               />
             </>
           )}
         </div>
 
-        {loading ? (
-          <SkeletonCard />
-        ) : (
-          <BudgetSnapshot
-            budgetOverview={dashboardData?.budgetOverview}
-            onOpenBudgets={() => navigate("/budgets")}
-          />
-        )}
+        {/* Main Insights Grid */}
+        <div className='grid grid-cols-1 gap-4 lg:grid-cols-[1fr_360px] xl:gap-6'>
+          {/* Left Column: Charts & Activity */}
+          <div className='space-y-4 xl:space-y-6'>
+            {loading ? <SkeletonCard /> : (
+              <FinanceOverview
+                totalBalance={totalBalance}
+                totalIncome={totalIncome}
+                totalExpense={totalExpenses}
+              />
+            )}
 
-        <div className='grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-2 xl:gap-6'>
-          <RecentTransactions
-            transactions={dashboardData?.recentTransactions}
-            onSeeMore={() => navigate("/expense")}
-          />
+            <TabbedActivity
+              recentAll={dashboardData?.recentTransactions}
+              recentIncome={dashboardData?.last60DaysIncome?.transaction}
+              recentExpense={dashboardData?.last30DaysExpenses?.transaction}
+              onSeeMoreAll={() => navigate("/expense")}
+              onSeeMoreIncome={() => navigate("/income")}
+              onSeeMoreExpense={() => navigate("/expense")}
+            />
+          </div>
 
-          <FinanceOverview
-            totalBalance={totalBalance}
-            totalIncome={totalIncome}
-            totalExpense={totalExpenses}
-          />
+          {/* Right Column: AI Insights & Budgets */}
+          <div className='space-y-4 xl:space-y-5'>
+            {/* Quick AI Metrics - Stacked Vertically */}
+            <div className='flex flex-col gap-3'>
+                <div className='card !bg-[#0f172a] text-white !p-4 border-white/5 shadow-xl'>
+                    <div className='flex items-center justify-between'>
+                        <div>
+                            <p className='text-[10px] font-bold uppercase tracking-widest text-white/50'>Savings Rate</p>
+                            <p className='mt-1 text-xl font-black text-white'>{loading ? "--" : `${savingsRate}%`}</p>
+                        </div>
+                        <div className="h-9 w-9 rounded-lg bg-white/10 flex items-center justify-center text-primary">
+                            <LuSparkles className="text-sm" />
+                        </div>
+                    </div>
+                </div>
+                <div className='card !bg-[#0f172a] text-white !p-4 border-white/5 shadow-xl'>
+                    <div className='flex items-center justify-between'>
+                        <div>
+                            <p className='text-[10px] font-bold uppercase tracking-widest text-white/50'>Flow Volume</p>
+                            <p className='mt-1 text-xl font-black text-white'>{loading ? "--" : formatCompactAmount(trackedVolume)}</p>
+                        </div>
+                        <div className="h-9 w-9 rounded-lg bg-white/10 flex items-center justify-center text-accent">
+                            <LuBadgeIndianRupee className="text-sm" />
+                        </div>
+                    </div>
+                </div>
+                <div className='card !bg-[#0f172a] text-white !p-4 border-white/5 shadow-xl'>
+                    <div className='flex items-center justify-between'>
+                        <div className='min-w-0 flex-1'>
+                            <p className='text-[10px] font-bold uppercase tracking-widest text-white/50'>Top Category</p>
+                            <p className='mt-1 text-lg font-bold text-white truncate'>{loading ? "..." : topExpenseCategory}</p>
+                        </div>
+                        <div className="h-9 w-9 rounded-lg bg-white/10 flex items-center justify-center text-rose-400 shrink-0 ml-3">
+                            <LuTrendingDown className="text-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-          <ExpenseTransaction
-            transactions={dashboardData?.last30DaysExpenses?.transaction || []}
-            onSeeMore={() => { navigate("/expense") }}
-          />
+            {loading ? <SkeletonCard /> : (
+              <BudgetSnapshot
+                budgetOverview={dashboardData?.budgetOverview}
+                onOpenBudgets={() => navigate("/budgets")}
+              />
+            )}
 
-          <Last30DaysExpenses
-            data={dashboardData?.last30DaysExpenses?.transaction}
-          />
+            <CategoryPieChart
+              data={dashboardData?.expenseCategories || {}}
+              title="Category Mix"
+            />
+          </div>
+        </div>
 
+        {/* Secondary Charts Row */}
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 xl:gap-6'>
+          <Last30DaysExpenses data={dashboardData?.last30DaysExpenses?.transaction} />
           <RecentIncomeWithChart
             data={dashboardData?.last60DaysIncome?.transaction?.slice(0, 4) || []}
             totalIncome={totalIncome}
-          />
-
-          <RecentIncome
-            transactions={dashboardData?.last60DaysIncome?.transaction || []}
-            onSeeMore={() => navigate("/income")}
-          />
-        </div>
-
-        <div className='grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-2 xl:gap-6'>
-          <CategoryPieChart
-            data={dashboardData?.expenseCategories || {}}
-            title="Expense Categories"
-          />
-
-          <CategoryPieChart
-            data={dashboardData?.incomeCategories || {}}
-            title="Income Categories"
           />
         </div>
       </div>

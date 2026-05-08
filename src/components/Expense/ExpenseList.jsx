@@ -1,7 +1,7 @@
 import React from 'react'
-import moment from 'moment'
 import { LuDownload } from 'react-icons/lu'
 import TransactionInfoCard from '../Cards/TransactionInfoCard'
+import { formatDate } from '../../utils/helper'
 
 const ExpenseList = ({ transactions, onDelete, onDownload, onEdit }) => {
   return (
@@ -26,7 +26,7 @@ const ExpenseList = ({ transactions, onDelete, onDownload, onEdit }) => {
                     key={expense._id}
                     title={expense.title || expense.category}
                     icon={expense.category}
-                    date={moment(expense.date).format("Do MMM YYYY")}
+                    date={formatDate(expense.date)}
                     amount={expense.amount}
                     type="expense"
                     onEdit={onEdit ? () => onEdit(expense) : undefined}

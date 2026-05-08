@@ -1,51 +1,43 @@
-import moment from "moment";
 import { LuWalletMinimal, LuLaptop, LuBuilding, LuTrendingUp, LuUtensils, LuHouse, LuGamepad2, LuCar, LuZap, LuHeart, LuGraduationCap, LuShoppingBag } from "react-icons/lu";
-
 
 export const CHART_COLORS = ["#0f766e", "#14b8a6", "#f59e0b", "#0f172a", "#64748b"];
 export const INR_SYMBOL = "\u20B9";
-
 
 export const validEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+/;
     return regex.test(email);
 }
-// /^[^\s@]+@[^\s@]+\.[^\s@]+$/ checks:
-// at least one non-space, non-@ character before @
-// t/hen an @
-// /then at least one non-space, non-@ character
-/// then a dot .
-/// then again at least one non-space, non-@ character
 
 export const getInitials = (name) => {
     if (!name) return "";
-
     const words = name.split(" ");
     let initials = "";
-
     for (let i = 0; i < Math.min(words.length, 2); i++) {
         initials += words[i][0]
     }
-
     return initials.toUpperCase();
 }
 
-export const addIndianThousandSeparator = (number) => {
-    let [integer, decimal] = number.toString().split(".");
-    let lastThree = integer.slice(-3);
-    let otherNumbers = integer.slice(0, -3);
+export const formatDate = (date, format = "default") => {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
 
-    if (otherNumbers !== "") {
-        lastThree = "," + lastThree;
+    if (format === "short") {
+        return new Intl.DateTimeFormat("en-IN", {
+            day: "numeric",
+            month: "short",
+        }).format(d);
     }
 
-    let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-    return decimal ? formatted + "." + decimal : formatted;
+    return new Intl.DateTimeFormat("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    }).format(d);
 }
 
 export const formatCurrency = (number, options = {}) => {
     const amount = Number(number ?? 0);
-
     return new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
@@ -56,7 +48,6 @@ export const formatCurrency = (number, options = {}) => {
 
 export const formatCompactAmount = (number) => {
     const amount = Number(number ?? 0);
-
     return new Intl.NumberFormat("en-IN", {
         notation: "compact",
         maximumFractionDigits: amount >= 100000 ? 1 : 0,
@@ -64,36 +55,28 @@ export const formatCompactAmount = (number) => {
 }
 
 export const prepareExpenseBarChartData = (data = []) => {
-    const chartData = data.map((item) => ({
+    return data.map((item) => ({
         category: item?.category,
         amount: item?.amount,
     }));
-
-    return chartData;
 }
 
 export const prepareIncomeBarChartData = (data = []) => {
     const sortedData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date))
-
-    const chartData = sortedData.map((item) => ({
-        month: moment(item?.date).format("Do MMM"),
+    return sortedData.map((item) => ({
+        month: formatDate(item?.date, "short"),
         amount: item?.amount,
         category: item?.category,
-    }))
-
-    return chartData;
+    }));
 }
 
 export const prepareExpenseLineChartData = (data = []) => {
     const sortedData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date))
-
-    const chartData = sortedData.map((item) => ({
-        month: moment(item?.date).format("Do MMM"),
+    return sortedData.map((item) => ({
+        month: formatDate(item?.date, "short"),
         amount: item?.amount,
         category: item?.category,
-    }))
-
-    return chartData;
+    }));
 }
 
 export const getIncomeIcon = (category) => {
@@ -109,18 +92,18 @@ export const getIncomeIcon = (category) => {
 
 export const getIconComponent = (iconName) => {
     const iconMap = {
-        LuWalletMinimal: LuWalletMinimal,
-        LuLaptop: LuLaptop,
-        LuBuilding: LuBuilding,
-        LuTrendingUp: LuTrendingUp,
-        LuUtensils: LuUtensils,
+        LuWalletMinimal,
+        LuLaptop,
+        LuBuilding,
+        LuTrendingUp,
+        LuUtensils,
         LuHome: LuHouse,
-        LuGamepad2: LuGamepad2,
-        LuCar: LuCar,
-        LuZap: LuZap,
-        LuHeart: LuHeart,
-        LuGraduationCap: LuGraduationCap,
-        LuShoppingBag: LuShoppingBag
+        LuGamepad2,
+        LuCar,
+        LuZap,
+        LuHeart,
+        LuGraduationCap,
+        LuShoppingBag
     };
     return iconMap[iconName] || LuUtensils;
 }

@@ -152,61 +152,61 @@ const Budgets = () => {
       <div className='page-shell'>
         <div className='page-header'>
           <div>
-            <p className='page-eyebrow'>Monthly planning</p>
+            <p className='page-eyebrow'>Financial Planning</p>
             <h1 className='page-title'>Budgets</h1>
             <p className='page-subtitle'>
-              Set monthly limits by category and keep a clean view of how actual spending compares.
+              Establish monthly guardrails. Define your limits across categories and monitor consumption.
             </p>
           </div>
 
-          <div className='flex w-full flex-col gap-3 sm:w-auto sm:flex-row'>
-            <label className='input-box min-w-0 rounded-full px-4 py-2.5 sm:min-w-[180px]'>
-              <input
-                type='month'
-                value={selectedMonth}
-                onChange={(event) => setSelectedMonth(event.target.value)}
-                className='input-control bg-transparent'
-              />
-            </label>
+          <div className='flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center'>
+            <div className='group relative'>
+                <input
+                    type='month'
+                    value={selectedMonth}
+                    onChange={(event) => setSelectedMonth(event.target.value)}
+                    className='input-box !mt-0 !rounded-full !py-2 !px-5 bg-white/50 backdrop-blur-sm transition-all focus:bg-white'
+                />
+            </div>
 
             <button
               type='button'
-              className='btn-primary !rounded-full !px-5 sm:!w-auto'
+              className='btn-primary !px-6'
               onClick={() => {
                 setEditingBudget(null)
                 setOpenBudgetModal(true)
               }}
             >
-              <LuPlus className='text-base' />
-              Add budget
+              <LuPlus className='text-lg' />
+              Add Budget
             </button>
           </div>
         </div>
 
-        <div className='card bg-[linear-gradient(135deg,rgba(245,158,11,0.08),rgba(255,255,255,0.96))]'>
+        <div className='card group border-amber-100 bg-[linear-gradient(135deg,rgba(245,158,11,0.05),rgba(255,255,255,0.8))]'>
           <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
-            <div className='flex items-start gap-3 sm:items-center'>
-              <div className='flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-[0_22px_48px_-30px_rgba(245,158,11,0.65)]'>
+            <div className='flex items-center gap-3.5'>
+              <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500 text-white shadow-md'>
                 <LuPiggyBank className='text-xl' />
               </div>
               <div>
-                <p className='text-sm font-semibold text-slate-900'>
-                  {budgetData?.monthLabel || formatBudgetMonthLabel(selectedMonth)}
+                <p className='text-sm font-bold tracking-tight text-slate-900'>
+                  {budgetData?.monthLabel || formatBudgetMonthLabel(selectedMonth)} Snapshot
                 </p>
-                <p className='text-sm text-slate-500'>
+                <p className='text-xs font-medium text-slate-500'>
                   {summary?.activeBudgets
-                    ? `${summary.activeBudgets} active budgets, ${formatCurrency(summary.totalBudgeted || 0)} planned for the month.`
-                    : 'No monthly budgets set yet for this period.'}
+                    ? `${summary.activeBudgets} active benchmarks, ${formatCurrency(summary.totalBudgeted || 0)} allocated.`
+                    : 'Awaiting your first budget allocation for this cycle.'}
                 </p>
               </div>
             </div>
 
             {summary?.unbudgetedSpend > 0 && (
-              <div className='rounded-[22px] border border-amber-200 bg-white/85 px-4 py-3 text-sm text-slate-600'>
-                <span className='font-semibold text-slate-900'>
+              <div className='rounded-xl border border-amber-200 bg-white/80 px-4 py-2 text-xs font-bold text-slate-600 backdrop-blur-md'>
+                <span className='text-slate-900'>
                   {formatCurrency(summary.unbudgetedSpend)}
                 </span>{' '}
-                spent outside your budgeted categories.
+                unmonitored leakage.
               </div>
             )}
           </div>

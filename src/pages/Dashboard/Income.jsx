@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import toast from "react-hot-toast"
-import { LuArrowUpRight, LuWalletMinimal } from 'react-icons/lu'
+import { LuArrowUpRight, LuWalletMinimal, LuPlus } from 'react-icons/lu'
 import DashboardLayout from '../../components/layouts/DashboardLayout'
 import IncomeOverview from '../../components/Income/IncomeOverview'
 import axiosInstance from '../../utils/axiosInstance'
@@ -105,33 +105,33 @@ const Income = () => {
       <div className='page-shell'>
         <div className='page-header'>
           <div>
-            <p className='page-eyebrow'>Income tracking</p>
+            <p className='page-eyebrow'>Revenue Stream</p>
             <h1 className='page-title'>Income</h1>
             <p className='page-subtitle'>
-              Keep your earnings clean, visible, and easy to review so your balance always has context.
+              Monitor every inflow with precision. Track your growth patterns and secondary revenue streams.
             </p>
           </div>
 
           <button
-            className='btn-primary !rounded-full !px-5 sm:!w-auto'
+            className='btn-primary !px-6'
             onClick={() => {
               setEditingIncome(null)
               setOpenAddIncomeModal(true)
             }}
           >
-            <LuArrowUpRight className='text-base' />
-            Add income
+            <LuPlus className='text-lg' />
+            Add Income
           </button>
         </div>
 
-        <div className='card bg-[linear-gradient(135deg,rgba(15,118,110,0.08),rgba(255,255,255,0.92))]'>
-          <div className='flex items-center gap-3'>
-            <div className='flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white shadow-[0_22px_48px_-30px_rgba(15,118,110,0.72)]'>
+        <div className='card group border-primary/10 bg-[linear-gradient(135deg,rgba(16,185,129,0.05),rgba(255,255,255,0.8))]'>
+          <div className='flex items-center gap-3.5'>
+            <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-md'>
               <LuWalletMinimal className='text-xl' />
             </div>
             <div>
-              <p className='text-sm font-semibold text-slate-900'>Income sources at a glance</p>
-              <p className='text-sm text-slate-500'>Track every stream so your growth is easier to trust.</p>
+              <p className='text-sm font-bold text-slate-900'>Inflow Intelligence</p>
+              <p className='text-xs font-medium text-slate-500'>Consolidate all earnings to unlock predictive balance insights.</p>
             </div>
           </div>
         </div>

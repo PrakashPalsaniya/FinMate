@@ -102,36 +102,36 @@ const Expense = () => {
 
   return (
     <DashboardLayout activeMenu="Expense">
-      <div className="page-shell">
+      <div className='page-shell'>
         <div className='page-header'>
           <div>
-            <p className='page-eyebrow'>Spending tracker</p>
+            <p className='page-eyebrow'>Capital Outflow</p>
             <h1 className='page-title'>Expenses</h1>
             <p className='page-subtitle'>
-              Stay ahead of daily outflow with a cleaner view of every expense, trend, and category.
+              Maintain a strict overview of your liquidity flow. Identify spending leakage and optimize your monthly burn rate.
             </p>
           </div>
 
           <button
-            className='btn-primary !rounded-full !px-5 sm:!w-auto'
+            className='btn-primary !px-6'
             onClick={() => {
               setEditingExpense(null)
               setOpenAddExpenseModal(true)
             }}
           >
-            <LuArrowDownRight className='text-base' />
-            Add expense
+            <LuArrowDownRight className='text-lg' />
+            Add Expense
           </button>
         </div>
 
-        <div className='card bg-[linear-gradient(135deg,rgba(244,63,94,0.07),rgba(255,255,255,0.92))]'>
-          <div className='flex items-center gap-3'>
-            <div className='flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500 text-white shadow-[0_22px_48px_-30px_rgba(244,63,94,0.72)]'>
+        <div className='card group border-rose-100 bg-[linear-gradient(135deg,rgba(244,63,94,0.05),rgba(255,255,255,0.8))]'>
+          <div className='flex items-center gap-3.5'>
+            <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-rose-500 text-white shadow-md'>
               <LuHandCoins className='text-xl' />
             </div>
             <div>
-              <p className='text-sm font-semibold text-slate-900'>Spend with more awareness</p>
-              <p className='text-sm text-slate-500'>Catch patterns early and keep your budget decisions grounded.</p>
+              <p className='text-sm font-bold text-slate-900'>Burn Rate Analysis</p>
+              <p className='text-xs font-medium text-slate-500'>Proactive tracking helps prevent over-budget situations before they occur.</p>
             </div>
           </div>
         </div>

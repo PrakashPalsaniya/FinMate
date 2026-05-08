@@ -8,13 +8,13 @@ const DashboardLayout = ({ children, activeMenu }) => {
     return (
         <div className='min-h-screen'>
             <Navbar activeMenu={activeMenu} />
-            <div className='mx-auto flex w-full max-w-[1600px] gap-4 px-3 pb-6 pt-3 sm:px-4 sm:pb-8 sm:pt-4 md:px-6 lg:gap-7 lg:px-8'>
+            <div className='mx-auto flex w-full max-w-[1720px] gap-6 px-4 pb-8 pt-4 sm:px-6 md:px-10 lg:gap-8 lg:px-12'>
                 {user && (
-                    <div className='hidden lg:block lg:w-[320px] lg:shrink-0'>
+                    <div className='hidden lg:block lg:w-[300px] lg:shrink-0'>
                         <SideMenu activeMenu={activeMenu} />
                     </div>
                 )}
-                <main className='min-w-0 flex-1'>
+                <main className='min-w-0 flex-1 pb-20 lg:pb-0'>
                     {children}
                 </main>
             </div>
