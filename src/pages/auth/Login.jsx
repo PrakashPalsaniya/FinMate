@@ -37,10 +37,10 @@ const Login = () => {
         password,
       })
 
-      const { token, user } = response.data
+      const { user } = response.data
 
-      if (token) {
-        login(user, token)
+      if (user) {
+        login(user)
         navigate("/dashboard", { replace: true })
       }
     } catch (error) {

@@ -18,7 +18,7 @@ const UserProvider = ({ children }) => {
         setUser(null);
     }
 
-    const login = (userData, token) => {
+    const login = (userData) => {
         setUser(userData);
         setLoading(false);
     }

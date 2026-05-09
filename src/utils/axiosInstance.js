@@ -22,25 +22,41 @@ axiosInstance.interceptors.request.use(
     }
 )
 
-// Response Interseptors
+// Response Interceptors
 axiosInstance.interceptors.response.use(
     (response) => {
         return response;
-    }, (error) => {
-        //Handle common errors globally
-        error.userMessage = getUserFriendlyErrorMessage(error)
+    }, async (error) => {
+        const originalRequest = error.config;
 
-        if (error.response) {
-            if (error.response.status === 401) {
-                // Unauthorized: server will have cleared cookie if needed; redirect to login
+        // If the error is 401 and not already retrying
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                // Attempt to refresh the token
+                await axios.post(`${BASE_URL}/api/v1/auth/refresh-token`, {}, { withCredentials: true });
+                
+                // If refresh successful, retry the original request
+                return axiosInstance(originalRequest);
+            } catch (refreshError) {
+                // If refresh fails, redirect to login
                 if (window.location.pathname !== "/login") {
                     window.location.href = "/login";
                 }
-            } else if (error.response.status === 500) {
+                return Promise.reject(refreshError);
+            }
+        }
+
+        // Handle other common errors globally
+        error.userMessage = getUserFriendlyErrorMessage(error)
+
+        if (error.response) {
+            if (error.response.status === 500) {
                 console.error("Server Error. Please try again later")
             }
         } else if (error.code === "ECONNABORTED") {
-            console.error("Request Timeout. Please try agian later")
+            console.error("Request Timeout. Please try again later")
         }
         return Promise.reject(error);
     }
