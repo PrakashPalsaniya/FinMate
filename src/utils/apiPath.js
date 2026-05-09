@@ -15,14 +15,16 @@ const resolveBaseUrl = () => {
             hostname === "0.0.0.0"
 
         if (isLocalDevelopment) {
-            return "http://localhost:5000"
+            // In development with Vite proxy, use relative path so requests go through the proxy
+            // The Vite server will proxy /api requests to http://localhost:5000
+            return ""
         }
 
         console.warn("VITE_API_URL is not set. Falling back to same-origin API requests.")
         return normalizeBaseUrl(origin)
     }
 
-    return "http://localhost:5000"
+    return ""
 }
 
 export const BASE_URL = resolveBaseUrl()
