@@ -7,11 +7,10 @@ const axiosInstance = axios.create({
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-    }
+    },
+    // CRITICAL: withCredentials allows cookies to be sent with cross-origin requests
+    withCredentials: true,
 })
-
-// Send cookies with requests so HttpOnly token cookie is included
-axiosInstance.defaults.withCredentials = true;
 
 axiosInstance.interceptors.request.use(
     (config) => {
