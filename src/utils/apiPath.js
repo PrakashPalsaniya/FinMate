@@ -35,6 +35,7 @@ export const API_PATH = {
         VERIFY_OTP: "/api/v1/auth/verify-otp",
         GET_USER_INFO: "/api/v1/auth/getUser",
         EXCHANGE_GOOGLE_CODE: (code) => `/api/v1/auth/exchange-google-code?code=${encodeURIComponent(code)}`,
+        LOGOUT: "/api/v1/auth/logout",
     },
     DASHBOARD: {
         GET_DATA: "/api/v1/dashboard",

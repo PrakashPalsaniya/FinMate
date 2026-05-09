@@ -10,12 +10,12 @@ const axiosInstance = axios.create({
     }
 })
 
+// Send cookies with requests so HttpOnly token cookie is included
+axiosInstance.defaults.withCredentials = true;
+
 axiosInstance.interceptors.request.use(
     (config) => {
-        const accessToken = localStorage.getItem("token");
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
-        }
+        // Access token is stored in an HttpOnly cookie; do not read from localStorage.
         return config;
     }, (error) => {
         return Promise.reject(error)
@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
 
         if (error.response) {
             if (error.response.status === 401) {
-                localStorage.removeItem("token");
+                // Unauthorized: server will have cleared cookie if needed; redirect to login
                 if (window.location.pathname !== "/login") {
                     window.location.href = "/login";
                 }
@@ -63,7 +63,7 @@ export default axiosInstance;
 
 // Adds a 10-second timeout to requests.
 
-// Automatically attaches the user’s authentication token (from localStorage) as a Bearer token in request headers if it exists.
+// Uses HttpOnly cookie for authentication; does not read localStorage for tokens.
 
 // Handles errors globally:
 

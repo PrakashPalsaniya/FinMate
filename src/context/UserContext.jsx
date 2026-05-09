@@ -19,26 +19,24 @@ const UserProvider = ({ children }) => {
     }
 
     const login = (userData, token) => {
-        localStorage.setItem('token', token);
         setUser(userData);
         setLoading(false);
     }
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        setUser(null);
-        setLoading(false);
+    const logout = async () => {
+        setLoading(true);
+        try {
+            await axiosInstance.post(API_PATH.AUTH.LOGOUT);
+        } catch (err) {
+            // ignore network errors — still clear local state
+            console.error('Logout request failed:', err?.message || err);
+        } finally {
+            setUser(null);
+            setLoading(false);
+        }
     }
 
     const bootstrapAuth = useCallback(async () => {
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-            setUser(null);
-            setLoading(false);
-            return false;
-        }
-
         setLoading(true);
 
         try {
@@ -47,7 +45,6 @@ const UserProvider = ({ children }) => {
             return Boolean(response.data?.user);
         } catch (error) {
             console.error("Failed to fetch user info:", error);
-            localStorage.removeItem('token');
             setUser(null);
             return false;
         } finally {

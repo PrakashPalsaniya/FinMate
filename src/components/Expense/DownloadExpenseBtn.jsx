@@ -10,12 +10,8 @@ const DownloadExpenseBtn = () => {
   const handleDownload = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.get(API_ENDPOINTS.EXPENSE_EXPORT, {
-        responseType: 'blob',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        responseType: 'blob'
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));

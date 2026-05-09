@@ -22,13 +22,12 @@ const AuthCallback = () => {
       if (code) {
         try {
           const response = await axiosInstance.get(API_PATH.AUTH.EXCHANGE_GOOGLE_CODE(code));
-          const { token, user } = response.data;
+          const { user } = response.data;
 
-          login(user, token);
+          login(user);
           navigate('/dashboard', { replace: true });
         } catch (error) {
           console.error('Error processing auth callback:', error);
-          localStorage.removeItem('token');
           setError('Authentication failed. Please try again.');
           setTimeout(() => navigate('/login'), 3000);
         }
