@@ -37,11 +37,9 @@ const Chat = () => {
 
   const sendMessage = async (messageText) => {
     const normalizedMessage = String(messageText || '').trim();
+    if (!normalizedMessage || isLoading) return;
 
-    if (!normalizedMessage) return;
-
-    const userMessage = { text: normalizedMessage, sender: 'user' };
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, { text: normalizedMessage, sender: 'user' }]);
     setInputMessage('');
     setIsLoading(true);
 
@@ -52,16 +50,18 @@ const Chat = () => {
       });
 
       if (response.data.success) {
-        const botMessage = {
-          text: response.data.reply,
-          sender: 'bot',
-          mode: response.data.mode || 'assistant',
-          fallback: Boolean(response.data.fallback),
-          rangeLabel: response.data.rangeLabel || '',
-        };
-        setMessages((prev) => [...prev, botMessage]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: response.data.reply,
+            sender: 'bot',
+            mode: response.data.mode || 'assistant',
+            fallback: Boolean(response.data.fallback),
+            rangeLabel: response.data.rangeLabel || '',
+          },
+        ]);
       } else {
-        toast.error('Failed to get response from Finance Buddy');
+        toast.error('Failed to get a response from Finance Buddy.');
       }
     } catch (error) {
       console.error('Chat error:', error);
@@ -71,9 +71,7 @@ const Chat = () => {
     }
   };
 
-  const handleSendMessage = async () => {
-    await sendMessage(inputMessage);
-  };
+  const handleSendMessage = () => sendMessage(inputMessage);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -86,6 +84,8 @@ const Chat = () => {
     <DashboardLayout activeMenu="Finance Buddy">
       <div className='page-shell'>
         <div className='card flex min-h-[calc(100dvh-8.4rem)] flex-col overflow-hidden sm:min-h-[calc(100dvh-9rem)] lg:min-h-[calc(100dvh-9.5rem)]'>
+
+          {/* ── Header ─────────────────────────────────────────── */}
           <div className='border-b border-slate-200/80 px-4 py-4 sm:px-5 sm:py-5 md:px-6'>
             <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
               <div>
@@ -110,9 +110,12 @@ const Chat = () => {
             </div>
           </div>
 
+          {/* ── Messages area ──────────────────────────────────── */}
           <div className='flex-1 flex flex-col overflow-hidden'>
             <div className='flex-1 overflow-y-auto overflow-x-hidden px-3 py-3 sm:px-4 sm:py-4 md:px-6'>
               <div className='max-w-full space-y-2.5 sm:space-y-3'>
+
+                {/* Welcome screen */}
                 {messages.length === 0 ? (
                   <div className='flex h-full flex-col items-center justify-center px-4 py-6 text-gray-500'>
                     <LuBot className='mb-3 text-4xl text-primary md:mb-4 md:text-6xl' />
@@ -144,11 +147,14 @@ const Chat = () => {
                         msg.sender === 'user' ? 'justify-end' : 'justify-start'
                       }`}
                     >
+                      {/* Bot avatar */}
                       {msg.sender === 'bot' && (
                         <div className='w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0'>
                           <LuBot className='text-white text-xs md:text-sm' />
                         </div>
                       )}
+
+                      {/* Message bubble */}
                       <div
                         className={`max-w-[82%] sm:max-w-[72%] md:max-w-md lg:max-w-lg px-3 py-2 md:px-4 md:py-2.5 rounded-2xl ${
                           msg.sender === 'user'
@@ -172,6 +178,8 @@ const Chat = () => {
                           {msg.text}
                         </p>
                       </div>
+
+                      {/* User avatar */}
                       {msg.sender === 'user' && (
                         <div className='w-7 h-7 md:w-8 md:h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0'>
                           <LuUser className='text-gray-600 text-xs md:text-sm' />
@@ -180,6 +188,8 @@ const Chat = () => {
                     </div>
                   ))
                 )}
+
+                {/* Typing indicator while waiting for response */}
                 {isLoading && (
                   <div className='flex items-start gap-2 md:gap-3'>
                     <div className='w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0'>
@@ -188,19 +198,21 @@ const Chat = () => {
                     <div className='bg-gray-100 px-3 py-2 md:px-4 md:py-2.5 rounded-2xl rounded-tl-md'>
                       <div className='flex items-center gap-2'>
                         <div className='flex space-x-1'>
-                          <div className='w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce'></div>
-                          <div className='w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce' style={{ animationDelay: '0.1s' }}></div>
-                          <div className='w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce' style={{ animationDelay: '0.2s' }}></div>
+                          <div className='w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce' />
+                          <div className='w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce' style={{ animationDelay: '0.1s' }} />
+                          <div className='w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce' style={{ animationDelay: '0.2s' }} />
                         </div>
                         <span className='text-xs text-gray-500 ml-1 md:ml-2'>Typing...</span>
                       </div>
                     </div>
                   </div>
                 )}
+
                 <div ref={messagesEndRef} />
               </div>
             </div>
 
+            {/* ── Input bar ──────────────────────────────────────── */}
             <div className='border-t border-slate-200/80 bg-white px-3 py-3 sm:px-4 sm:py-4 md:px-6 flex-shrink-0'>
               <div className='flex gap-2 max-w-full items-end'>
                 <input
@@ -223,6 +235,7 @@ const Chat = () => {
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </DashboardLayout>
