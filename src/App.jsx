@@ -86,16 +86,3 @@ const RouteFallback = () => (
 )
 
 export default App
-
-
-// Router (or BrowserRouter)
-// Wraps your entire app.
-// Enables client-side routing (changing pages without refreshing).
-// Tracks the URL in the address bar and shows the correct page/component.
-
-// Routes
-// A container for all your Routes.
-// Think of it as a switchboard: it reads the current URL and matches it to a Route.
-
-// Route
-// Defines a URL path and which component should render when that path is visited.

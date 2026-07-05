@@ -13,7 +13,6 @@ const Last30DaysExpenses = ({ data }) => {
         return () => { }
     }, [data])
 
-
     return (
         <div className="card">
             <div className="flex items-center justify-between">

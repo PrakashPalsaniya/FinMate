@@ -16,7 +16,7 @@ const resolveBaseUrl = () => {
 
         if (isLocalDevelopment) {
             // In development with Vite proxy, use relative path so requests go through the proxy
-            // The Vite server will proxy /api requests to http://localhost:5000
+            // The Vite server will proxy /api requests to http://3.110.131.185:5000
             return ""
         }
 
@@ -67,6 +67,7 @@ export const API_PATH = {
     },
     CHAT: {
         SEND_MESSAGE: "/api/v1/chat",
+        STREAM_MESSAGE: "/api/v1/chat/stream",
     },
     SETTINGS: {
         GET_SETTINGS: "/api/v1/settings",
