@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { useUserAuth } from '../../hooks/useUserAuth';
 import axiosInstance from '../../utils/axiosInstance';
-import { API_PATH } from '../../utils/apiPath';
+import { API_PATH, BASE_URL } from '../../utils/apiPath';
 
 const STARTER_PROMPTS = [
   'How much did I spend this month?',
@@ -35,38 +35,160 @@ const Chat = () => {
     scrollToBottom();
   }, [messages]);
 
+  // POST to the streaming chat endpoint. Retries once on a 401 by refreshing
+  // the access-token cookie, mirroring the axios interceptor behaviour.
+  const streamChatRequest = async (payload) => {
+    const url = `${BASE_URL}${API_PATH.CHAT.STREAM_MESSAGE}`;
+    const requestInit = {
+      method: 'POST',
+      credentials: 'include', // send the HttpOnly auth cookie
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+      },
+      body: JSON.stringify(payload),
+    };
+
+    let response = await fetch(url, requestInit);
+
+    if (response.status === 401) {
+      // Try to refresh the token cookie, then retry the request once.
+      try {
+        await axiosInstance.post('/api/v1/auth/refresh-token', {});
+        response = await fetch(url, requestInit);
+      } catch (refreshError) {
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        throw refreshError;
+      }
+    }
+
+    return response;
+  };
+
   const sendMessage = async (messageText) => {
     const normalizedMessage = String(messageText || '').trim();
     if (!normalizedMessage || isLoading) return;
 
-    setMessages((prev) => [...prev, { text: normalizedMessage, sender: 'user' }]);
+    // Add the user message and an empty bot placeholder we fill as tokens stream in.
+    let botIndex = -1;
+    setMessages((prev) => {
+      botIndex = prev.length + 1; // user goes at prev.length, bot right after
+      return [
+        ...prev,
+        { text: normalizedMessage, sender: 'user' },
+        {
+          text: '',
+          sender: 'bot',
+          mode: 'assistant',
+          fallback: false,
+          rangeLabel: '',
+          streaming: true,
+        },
+      ];
+    });
+
     setInputMessage('');
     setIsLoading(true);
 
+    // Merge partial updates into the bot placeholder by its index.
+    const patchBotMessage = (patch) => {
+      setMessages((prev) => {
+        if (!prev[botIndex]) return prev;
+        const next = [...prev];
+        next[botIndex] = { ...next[botIndex], ...patch };
+        return next;
+      });
+    };
+
+    let botText = '';
+    let sawError = false;
+
     try {
-      const response = await axiosInstance.post(API_PATH.CHAT.SEND_MESSAGE, {
+      const response = await streamChatRequest({
         message: normalizedMessage,
         language: selectedLanguage,
       });
 
-      if (response.data.success) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            text: response.data.reply,
-            sender: 'bot',
-            mode: response.data.mode || 'assistant',
-            fallback: Boolean(response.data.fallback),
-            rangeLabel: response.data.rangeLabel || '',
-          },
-        ]);
-      } else {
-        toast.error('Failed to get a response from Finance Buddy.');
+      // Non-streaming failure (e.g. 429 rate limit or 500) — body is JSON, not SSE.
+      if (!response.ok) {
+        let serverMessage = 'Something went wrong. Please try again.';
+        try {
+          const data = await response.json();
+          serverMessage = data.message || serverMessage;
+        } catch {
+          // ignore parse errors, keep default message
+        }
+        throw new Error(serverMessage);
+      }
+
+      if (!response.body) {
+        throw new Error('Streaming is not supported by this browser.');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      // Read the SSE stream frame by frame. Frames are separated by a blank line.
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const frames = buffer.split('\n\n');
+        buffer = frames.pop() ?? ''; // keep the last incomplete frame
+
+        for (const frame of frames) {
+          const line = frame.trim();
+          if (!line || line.startsWith(':')) continue; // heartbeat / comment
+          if (!line.startsWith('data:')) continue;
+
+          const jsonStr = line.slice(5).trim();
+          if (!jsonStr) continue;
+
+          let event;
+          try {
+            event = JSON.parse(jsonStr);
+          } catch {
+            continue; // skip malformed frame
+          }
+
+          if (event.type === 'token') {
+            botText += event.token || '';
+            patchBotMessage({ text: botText });
+          } else if (event.type === 'done') {
+            patchBotMessage({
+              streaming: false,
+              mode: event.mode || 'assistant',
+              fallback: Boolean(event.fallback),
+              rangeLabel: event.rangeLabel || '',
+            });
+          } else if (event.type === 'error') {
+            sawError = true;
+            toast.error(event.message || 'Failed to get a response from Finance Buddy.');
+          }
+        }
+      }
+
+      // Stream ended without any content and without an explicit error event.
+      if (!sawError && !botText.trim()) {
+        sawError = true;
+        toast.error('Finance Buddy did not return a response. Please try again.');
       }
     } catch (error) {
       console.error('Chat error:', error);
-      toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
+      sawError = true;
+      toast.error(error.message || 'Something went wrong. Please try again.');
     } finally {
+      // If nothing streamed in, drop the empty bot placeholder.
+      if (sawError && !botText.trim()) {
+        setMessages((prev) => prev.filter((_, idx) => idx !== botIndex));
+      } else {
+        patchBotMessage({ streaming: false });
+      }
       setIsLoading(false);
     }
   };
@@ -140,13 +262,21 @@ const Chat = () => {
                     </div>
                   </div>
                 ) : (
-                  messages.map((msg, index) => (
+                  messages.map((msg, index) => {
+                    // While waiting for the first token the bot bubble is empty —
+                    // the typing indicator below covers that state, so skip it here.
+                    if (msg.sender === 'bot' && msg.streaming && !msg.text) {
+                      return null;
+                    }
+
+                    return (
                     <div
                       key={index}
                       className={`flex items-start gap-2 md:gap-3 ${
                         msg.sender === 'user' ? 'justify-end' : 'justify-start'
                       }`}
                     >
+
                       {/* Bot avatar */}
                       {msg.sender === 'bot' && (
                         <div className='w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0'>
@@ -176,6 +306,9 @@ const Chat = () => {
                         )}
                         <p className='whitespace-pre-wrap break-words text-[13px] leading-6 sm:text-sm md:text-base'>
                           {msg.text}
+                          {msg.sender === 'bot' && msg.streaming && (
+                            <span className='ml-0.5 inline-block h-4 w-1.5 translate-y-0.5 animate-pulse rounded-sm bg-gray-400 align-middle' />
+                          )}
                         </p>
                       </div>
 
@@ -186,11 +319,13 @@ const Chat = () => {
                         </div>
                       )}
                     </div>
-                  ))
+                    );
+                  })
                 )}
 
-                {/* Typing indicator while waiting for response */}
-                {isLoading && (
+
+                {/* Typing indicator only while waiting for the first token */}
+                {isLoading && !messages[messages.length - 1]?.text && (
                   <div className='flex items-start gap-2 md:gap-3'>
                     <div className='w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0'>
                       <LuBot className='text-white text-xs md:text-sm' />
